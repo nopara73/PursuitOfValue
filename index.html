@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Valuefulness — 7×7 Program</title>
-<meta name="description" content="Seven chapters. Seven days each. Quote → exercise with progressive overload."/>
+<title>Pursuit of Value — 7×7 Program</title>
+<meta name="description" content="Seven chapters. Seven days each. Quote → cumulative exercise with progressive overload."/>
 <style>
   :root{
     --bg:#0b1210; --ink:#eaf7f1; --muted:#a8c3b9; --card:#0f1814; --line:rgba(255,255,255,.08);
@@ -39,6 +39,7 @@
   .sheet{width:min(720px,96vw);background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px}
   blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:#0a1411;border-radius:8px}
   textarea{width:100%;background:#0a1411;border:1px solid var(--line);color:var(--ink);padding:12px 14px;border-radius:12px;font-size:15px}
+  ul{margin:8px 0 0 18px}
 </style>
 </head>
 <body>
@@ -47,8 +48,8 @@
       <div class="row">
         <div style="width:40px;height:40px;border-radius:50%;background:conic-gradient(from 270deg,var(--accent),#71f7b7,var(--accent2) 65%,#0d7c48 85%,var(--accent))"></div>
         <div>
-          <h1>Valuefulness</h1>
-          <div class="muted">Seven chapters. Seven days each. Quote → exercise with overload.</div>
+          <h1>Pursuit of Value</h1>
+          <div class="muted">Seven chapters. Seven days each. Quote → cumulative exercise with overload.</div>
         </div>
       </div>
       <div class="row">
@@ -100,8 +101,8 @@
       </div>
 
       <div id="quoteWrap" style="margin-top:8px">
-        <div class="muted">Chapter quote</div>
-        <blockquote id="quote">“Replace with Mazzone quote for this chapter and keep it short.”</blockquote>
+        <div class="muted">Quote of the day</div>
+        <blockquote id="quote"></blockquote>
       </div>
 
       <div id="exerciseWrap" style="margin-top:12px;display:none">
@@ -122,113 +123,171 @@
   </div>
 
 <script>
-/* =================== Program spec =================== */
-/* Quotes are placeholders. Replace QUOTES[x] strings with your real short quotes. */
+/* =================== Quotes: 7 per chapter (day-specific) =================== */
 const QUOTES = [
-  "Method — placeholder quote.",
-  "Value — placeholder quote.",
-  "Mythology — placeholder quote.",
-  "Ethics — placeholder quote.",
-  "Meaning — placeholder quote.",
-  "Mind — placeholder quote.",
-  "Cognition — placeholder quote."
+  // 1. METHOD
+  [
+    "Our solitude isn’t a handicap that we have to overcome before we can start work. It is the work.",
+    "We should then be suspicious of monolithic perspectives as much as the idea that life or any complex phenomenon is simply an incoherent jumble of events.",
+    "Value also becomes intelligible as an inescapable movement of consciousness through time, space and circumstance which requires the production of appropriate values, suitably adjudicated by choice.",
+    "Personal action is a form of philosophical method.",
+    "Consciousness offers a unique and special portal to apprehending the world, not least to the world of our own conscious existence.",
+    "Understanding the first person phenomena of consciousness will involve first person methods.",
+    "Humanly and intellectually, we have further to go."
+  ],
+  // 2. VALUE
+  [
+    "Where there is consciousness, there is also value.",
+    "Choice as ‘selection’ is one of the grounds of value.",
+    "Values abound in the world and they present themselves in a variety of ways which include external objects, relations between object, and within mind and consciousness itself.",
+    "The underlying presence of value is seldom recognised.",
+    "It becomes difficult to view the world without parallel conceptions of value as attributes of our concern with the world.",
+    "Value can be regarded as a choice and as a preference.",
+    "We would expect to be able to find value in places apart from within even human cognition."
+  ],
+  // 3. MYTHOLOGY / RELIGION
+  [
+    "As a form of mythology, religion is a means of going to places that conceptual precision cannot reach, and it offers particular access to consciousness, value and value experience.",
+    "With religion, mankind is able to reach deeply into himself with greater clarity, power and effect.",
+    "Religious myth has a descriptive advantage over normal cognitive thought in that it escapes the limitations of realism and objectivism in its representations and descriptions.",
+    "God is the highest conceivable value or ‘ideal’ that is able to represent the struggle for value to the point of ultimate sacrifice.",
+    "Religion is also a powerful metaphor of self and in its capacities of representation and magnitude, it is able to function for many as both the experience and explanation of value.",
+    "The splendid capacity of religion for the experience of extraordinary value is accompanied by significant shortcomings.",
+    "Religion can reveal and express aspects of human value hidden to demands of precision, clarity and reason."
+  ],
+  // 4. ETHICS
+  [
+    "Ethics has a special place within human life, yet its privileged position and status are by no means assured.",
+    "The inherent vagueness, indeterminability and ‘uncodifiability’ of ethics as a category of human understanding returns us to the view that ethics is an essentially human activity.",
+    "Ethical events are experienced as special because of their ability to reflexively attribute value to their agents.",
+    "Principles, abstractions and physical objects can only possess attributed value, whereas conscious or sentient beings can have intrinsic value.",
+    "The notion of value-maximisation is similarly lacking in refinement, but it can be usefully contrasted to the kind of value that we are developing here.",
+    "Other-people have a special and privileged status with respect to our actions and relations with the world due to the kind of objects or beings that we can rationally or legitimately grace with value beyond their function or usefulness.",
+    "All these features and more must be catered to, both in an adequate account of ethics and in human life."
+  ],
+  // 5. MEANING
+  [
+    "Questions of meaning and purpose appeal to a synoptic view of life and thereby find themselves in a far wider scope than the problems of everyday life.",
+    "Meaning and purpose are routed through mortality.",
+    "Such, then, is the demand upon a theory of meaning that it be able to withstand loss.",
+    "Indifference at a time of significant personal loss would be considered aberrant, pathological or even inhuman.",
+    "It might be ethically adequate to have good intentions without recourse to ‘truth’ and without a conventional purpose in life.",
+    "Within a secular system mental states such as meaningfulness that stand in opposition to loss are vulnerable to reasons and argument denying their objectivity and justifying the concomitant loss in value.",
+    "No particular belief is able to capture the truth at the heart of life."
+  ],
+  // 6. MIND
+  [
+    "Self-consciousness stands at the gateway to the deeper aspirations of mind.",
+    "Cognition and thought are the ‘home’ and the ‘dwelling place’ of consciousness.",
+    "Affective and cognitive states are entangled with each other because they are both constituents of mind.",
+    "The mind-body debate is still hostage to a pattern of growth between undetected confusion and healthy ignorance, in an abundance of explanatory accounts which fail to explain.",
+    "An adequate awareness of mind should be eventually able to eliminate common fallacies, rather than be preoccupied with them.",
+    "It is an objective of this work to find a position for philosophy of mind and to pose a theory of mind that can be systematically expounded.",
+    "Consciousness and value are central concerns of human life, even while truth and objectivity remain problematic."
+  ],
+  // 7. COGNITION
+  [
+    "The focus of this present chapter is the dialectic between cognition and affective states, particularly between cognition and a sufficiency of value.",
+    "Each, in turn, functionally supports the other according to the circumstances of life.",
+    "As a first pass into the future, the supportive function of cognition is suggested as a possible resolution.",
+    "There is, however, more to subjective existentialism than an alienated observer of the world.",
+    "Cognitive states of value do not have affective content, which is required for values according to our concept of them.",
+    "But we cannot, however, do without cognitive support even if it can be shown to have all the shortcomings just listed.",
+    "If cognition and knowledge cannot be ends in themselves, what then are their most compelling claims to value?"
+  ]
 ];
 
+/* =================== Program spec =================== */
 const PROGRAM = [
   { name:"Method", theme:"Philosophy as disciplined self-inquiry.",
     base:"Observe the mechanism of choosing and valuing.",
     overload:[
-      "Day 1 — Describe one recent choice.",
-      "Day 2 — Describe how you decided.",
-      "Day 3 — Identify the value that guided it.",
-      "Day 4 — Name one unchosen option and its cost.",
-      "Day 5 — Find a pattern across the last three entries.",
-      "Day 6 — Condense your method of valuing in ≤ 12 words.",
-      "Day 7 — Act today using that personal method once."
+      "Describe one recent choice.",
+      "Describe how you decided.",
+      "Identify the value that guided it.",
+      "Name one unchosen option and its cost.",
+      "Find a pattern across the last three entries.",
+      "Condense your method of valuing in ≤ 12 words.",
+      "Act today using that personal method once."
     ]},
   { name:"Value", theme:"Value is selection, not possession.",
-    base:"Extract “value-kernels” from experience.",
+    base:"Extract ‘value-kernels’ from experience.",
     overload:[
-      "Day 1 — One moment that felt valuable.",
-      "Day 2 — Why was it valuable?",
-      "Day 3 — What quality mattered most?",
-      "Day 4 — Phrase that quality in 6 words.",
-      "Day 5 — Another moment with the same quality.",
-      "Day 6 — Can the quality exist without the object?",
-      "Day 7 — Create that quality deliberately today."
+      "One moment that felt valuable.",
+      "Why was it valuable?",
+      "What quality mattered most?",
+      "Phrase that quality in 6 words.",
+      "Another moment with the same quality.",
+      "Can the quality exist without the object?",
+      "Create that quality deliberately today."
     ]},
   { name:"Mythology", theme:"Roles and stories distort value.",
     base:"Separate value from identity roles.",
     overload:[
-      "Day 1 — List main social roles.",
-      "Day 2 — Pick one; what value do you chase through it?",
-      "Day 3 — Express that value outside the role.",
-      "Day 4 — Perform such an act once.",
-      "Day 5 — Describe the feeling of separation from the role.",
-      "Day 6 — Shorten your list; keep only value labels.",
-      "Day 7 — Live one day without invoking the role mentally."
+      "List main social roles.",
+      "Pick one; what value do you chase through it?",
+      "Express that value outside the role.",
+      "Perform such an act once.",
+      "Describe the feeling of separation from the role.",
+      "Shorten your list; keep only value labels.",
+      "Live one day without invoking the role mentally."
     ]},
   { name:"Ethics", theme:"Live values, not rules.",
     base:"Replace judgment with enacted value.",
     overload:[
-      "Day 1 — Recall one moral judgment you made.",
-      "Day 2 — Identify its underlying value.",
-      "Day 3 — Act on that value without judging.",
-      "Day 4 — Notice resistance or pride.",
-      "Day 5 — One sentence linking humility to value.",
-      "Day 6 — Apply to another small judgment.",
-      "Day 7 — Summarize your ethical pattern in 10 words."
+      "Recall one moral judgment you made.",
+      "Identify its underlying value.",
+      "Act on that value without judging.",
+      "Notice resistance or pride.",
+      "One sentence linking humility to value.",
+      "Apply to another small judgment.",
+      "Summarize your ethical pattern in 10 words."
     ]},
   { name:"Meaning", theme:"Meaning = value that survives loss.",
     base:"Practice equanimity under absence.",
     overload:[
-      "Day 1 — Name a current loss.",
-      "Day 2 — Name what value remains possible now.",
-      "Day 3 — Do a small act serving it.",
-      "Day 4 — Reflect on felt sufficiency.",
-      "Day 5 — Imagine another future loss; repeat the pattern.",
-      "Day 6 — Condense the pattern into one sentence.",
-      "Day 7 — Use that sentence as a mantra today."
+      "Name a current loss.",
+      "Name what value remains possible now.",
+      "Do a small act serving it.",
+      "Reflect on felt sufficiency.",
+      "Imagine another future loss; repeat the pattern.",
+      "Condense the pattern into one sentence.",
+      "Use that sentence as a mantra today."
     ]},
   { name:"Mind", theme:"Attention is the medium of value.",
     base:"Rest awareness on value quality, not object.",
     overload:[
-      "Day 1 — 30 s silent focus on bodily sensation.",
-      "Day 2 — Name the quality felt.",
-      "Day 3 — Hold attention on the quality, not location.",
-      "Day 4 — Repeat 60 s twice today.",
-      "Day 5 — Describe how stability changes perception.",
-      "Day 6 — Extend to 90 s; note drift count.",
-      "Day 7 — Define “valuing without object” in your words."
+      "30 s silent focus on bodily sensation.",
+      "Name the quality felt.",
+      "Hold attention on the quality, not location.",
+      "Repeat 60 s twice today.",
+      "Describe how stability changes perception.",
+      "Extend to 90 s; note drift count.",
+      "Define ‘valuing without object’ in your words."
     ]},
   { name:"Cognition", theme:"Thinking should serve valuing.",
     base:"Compress understanding; express clearly.",
     overload:[
-      "Day 1 — Write one sentence capturing your current insight.",
-      "Day 2 — Delete half the words.",
-      "Day 3 — Speak it aloud; refine phrasing.",
-      "Day 4 — Explain it to a skeptic.",
-      "Day 5 — Make it universal: remove “I”.",
-      "Day 6 — Turn it into a guiding maxim.",
-      "Day 7 — Enact one decision by that maxim."
+      "Write one sentence capturing your current insight.",
+      "Delete half the words.",
+      "Speak it aloud; refine phrasing.",
+      "Explain it to a skeptic.",
+      "Make it universal: remove ‘I’.",
+      "Turn it into a guiding maxim.",
+      "Enact one decision by that maxim."
     ]}
 ];
 
 /* =================== State =================== */
-const LS_KEY = "pov_7x7_v1";
+const LS_KEY = "pov_7x7_v2"; // reset key for new logic
 function load(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {
-    chapter:0, day:0, // 0..6; 0..6
-    entries:[],        // {date, chapter, day, note}
-    lastDone:null
-  }; }catch(e){ return {chapter:0, day:0, entries:[], lastDone:null}; }
+    chapter:0, day:0,
+    entries:[]
+  }; }catch(e){ return {chapter:0, day:0, entries:[]}; }
 }
 const S = load();
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
-function todayStr(){
-  const d=new Date(); const z=d.getTimezoneOffset();
-  return new Date(d.getTime()-z*60000).toISOString().slice(0,10);
-}
 
 /* =================== UI refs =================== */
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
@@ -260,11 +319,12 @@ function renderMap(){
   });
 }
 function renderHistory(){
-  const arr=[...S.entries].sort((a,b)=> a.date<b.date?1:-1);
+  const arr=[...S.entries].sort((a,b)=> a.ts<b.ts?1:-1);
   historyEl.innerHTML = arr.map(e=>{
     const label = `${PROGRAM[e.chapter].name} · Day ${e.day+1}`;
+    const d = new Date(e.ts);
     return `<div class="item">
-      <div class="muted" style="text-align:center">${new Date(e.date+'T00:00:00').toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</div>
+      <div class="muted" style="text-align:center">${d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</div>
       <div><div style="font-weight:700">${label}</div><div class="muted">${(e.note||'').replace(/[<>&]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))||'(no note)'}</div></div>
       <div class="muted" style="text-align:right">#${e.chapter+1}.${e.day+1}</div>
     </div>`;
@@ -275,61 +335,57 @@ function renderHistory(){
 let stage=0; // 0=quote, 1=exercise
 start.onclick=()=> openSession();
 nextBtn.onclick=()=> {
-  if(stage===0){ // move to exercise
+  if(stage===0){
     stage=1;
     quoteWrap.style.display='none';
     exerciseWrap.style.display='block';
     nextBtn.style.display='none';
-  } else { /* no-op */ }
+  }
 };
 closeBtn.onclick=()=> modal.classList.remove('open');
+
+function buildCumulative(chIndex, dayIndex){
+  // returns HTML list of tasks Day1..DayN (exact repetition cumulates)
+  const items = PROGRAM[chIndex].overload.slice(0, dayIndex+1)
+    .map((t,i)=>`<li>Day ${i+1} — ${t}</li>`).join('');
+  return `<div class="muted">Do the following today:</div><ul>${items}</ul>`;
+}
 
 function openSession(){
   stage=0; answer.value="";
   const ch=PROGRAM[S.chapter];
-  quoteEl.textContent = QUOTES[S.chapter];
+  quoteEl.textContent = QUOTES[S.chapter][S.day] || '';
   exTitle.textContent = "Exercise";
   exBase.textContent = ch.base;
-  exOver.textContent = ch.overload[S.day];
+  exOver.innerHTML = buildCumulative(S.chapter, S.day);
   quoteWrap.style.display='block';
   exerciseWrap.style.display='none';
   nextBtn.style.display='inline-block';
   modal.classList.add('open');
 }
 
-/* Enforce one completion per calendar day. Remove if you want free-run. */
-function canCompleteToday(){
-  const t=todayStr();
-  return S.lastDone!==t;
-}
-
-document.getElementById('save').onclick = ()=>{
-  if(!canCompleteToday()){
-    alert("Today's session already completed. Come back tomorrow.");
-    return;
-  }
-  const entry = {date:todayStr(), chapter:S.chapter, day:S.day, note:answer.value.trim()};
+// test-friendly: allow multiple runs per day
+function complete(){
+  const entry = {ts: Date.now(), chapter:S.chapter, day:S.day, note:answer.value.trim()};
   S.entries.push(entry);
-  S.lastDone = todayStr();
-
-  // advance progression
   if(S.day<6){ S.day++; }
   else { S.day=0; if(S.chapter<6) S.chapter++; }
-
   save();
   modal.classList.remove('open');
   render();
-};
+}
+
+document.getElementById('save').onclick = complete;
 
 /* =================== Export / Import / Reset =================== */
 exportBtn.onclick = ()=>{
   const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='valuefulness-7x7.json'; a.click(); URL.revokeObjectURL(a.href);
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pursuit-of-value-7x7.json'; a.click(); URL.revokeObjectURL(a.href);
 };
 importFile.onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
   try{ const obj=JSON.parse(await f.text());
-    if(typeof obj.chapter!=='number' || typeof obj.day!=='number') throw new Error('invalid');
+    if(typeof obj.chapter!=="number" || typeof obj.day!=="number") throw new Error('invalid');
     Object.assign(S,obj); save(); render();
   }catch{ alert('Invalid file'); }
   e.target.value='';
@@ -342,7 +398,6 @@ resetBtn.onclick=()=>{
 /* =================== Init =================== */
 render();
 
-/* Optional keyboard shortcuts */
 document.addEventListener('keydown', e=>{
   if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
   if(e.key.toLowerCase()==='s') start.click();
