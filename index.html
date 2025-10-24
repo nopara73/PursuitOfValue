@@ -3,596 +3,347 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pursuit of Value — Valuefulness</title>
-  <meta name="description" content="Daily valuefulness ritual. Build equanimity and value‑sufficiency in 3 minutes a day."/>
+  <title>Valuefulness — The Pursuit of Value (Progressive)</title>
+  <meta name="description" content="A progressive training program that operationalizes Mazzone's Pursuit of Value into daily drills with progressive overload."/>
   <style>
     :root{
-      --bg:#0c1210;           /* deep green‑black */
-      --panel:#0f1815;        /* cards */
-      --panel-2:#0b1512;      /* alt */
-      --text:#e7f5ef;         /* near‑white */
-      --muted:#a8c3b9;        /* muted */
-      --accent:#2bd671;       /* primary green */
-      --accent-2:#12a65a;     /* darker green */
-      --warn:#ffb02e;
-      --danger:#ff5d5d;
-      --ok:#67e8a5;
-      --shadow: 0 20px 40px rgba(0,0,0,.35);
-      --radius: 20px;
+      --bg:#0b1210; --ink:#e9f7f0; --muted:#a8c3b9; --card:#0e1814; --line:rgba(255,255,255,.08);
+      --accent:#29d66f; --accent2:#129a58; --warn:#ffb02e; --bad:#ff6b6b; --good:#67e8a5; --radius:18px; --sh:0 14px 34px rgba(0,0,0,.35)
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
-      color:var(--text); background: radial-gradient(1200px 800px at 80% -10%, #143a2b 0%, #0d1a14 35%, #0c1210 70%), var(--bg);
-    }
-    .wrap{max-width:980px; margin:0 auto; padding:24px;}
-    header{
-      display:flex; align-items:center; gap:12px; justify-content:space-between; margin-bottom:18px;
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .logo{
-      width:40px;height:40px;border-radius:50%;
-      background: conic-gradient(from 270deg, var(--accent), #6bf7b1, var(--accent-2) 60%, #0c7d47 80%, var(--accent));
-      box-shadow: inset 0 0 12px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.35);
-    }
+    body{margin:0; font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial; color:var(--ink); background:radial-gradient(1000px 700px at 80% -10%, #163a2b 0%, #0b1512 40%, #0b1210 70%) , #0b1210}
+    .wrap{max-width:1100px;margin:0 auto; padding:22px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:42px;height:42px;border-radius:50%; background:conic-gradient(from 270deg, var(--accent), #71f7b7, var(--accent2) 65%, #0d7c48 85%, var(--accent)); box-shadow:inset 0 0 12px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.35)}
     h1{font-size:20px;margin:0}
-    .tag{font-size:12px;color:var(--muted)}
+    .sub{font-size:12px;color:var(--muted)}
 
-    .grid{
-      display:grid; grid-template-columns: 1.5fr 1fr; gap:18px;
-    }
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .grid{display:grid;grid-template-columns: 1.35fr 1fr; gap:16px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--sh); padding:16px}
+    .h2{font-size:15px;font-weight:700;margin-bottom:6px}
+    .muted{color:var(--muted);font-size:13px}
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)), var(--panel);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      padding:18px;
-    }
-    .card h2{font-size:16px;margin:0 0 8px 0}
-    .help{font-size:13px;color:var(--muted)}
+    .primary{background:linear-gradient(160deg, var(--accent), var(--accent2)); color:#06371f; border:none}
+    .btn{border:1px solid var(--line); background:#0e1814; color:var(--ink); border-radius:12px; padding:10px 14px; cursor:pointer}
+    .btn[disabled]{opacity:.6;cursor:not-allowed}
 
-    .big-cta{
-      margin-top:8px; display:grid; place-items:center; padding:22px; border-radius:calc(var(--radius) + 20px);
-      background: linear-gradient(160deg, #0f1f1a, #0b1512);
-      border:1px solid rgba(255,255,255,.05);
-    }
+    /* Session */
+    .session{display:grid;grid-template-columns:1fr;gap:10px}
+    .pill{background:#0b1512; border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:12px; color:var(--muted); display:inline-flex; align-items:center; gap:8px}
+    .flex{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .big{display:grid;place-items:center;padding:20px;border-radius:26px;background:linear-gradient(160deg,#0f1f1a,#0b1512); border:1px solid var(--line)}
+    .cta{width:220px;height:220px;border-radius:50%;font-weight:800;font-size:18px; letter-spacing:.2px; border:none; cursor:pointer; background: radial-gradient(85% 85% at 50% 20%, #4affb4, var(--accent) 55%, var(--accent2) 100%); box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35)}
 
-    .tap{
-      width:220px;height:220px;border-radius:50%; cursor:pointer; border:none; color:#092114;
-      background: radial-gradient(85% 85% at 50% 20%, #4affb4, var(--accent) 55%, var(--accent-2) 100%);
-      font-weight:700; font-size:18px; letter-spacing:.2px; box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35);
-      transition: transform .08s ease;
-    }
-    .tap:active{ transform: scale(.98) }
-    .tap[disabled]{ filter:grayscale(.4) opacity(.8); cursor:not-allowed }
-
-    .stats{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px}
-    .pill{
-      background:#0b1512; border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:10px 14px; font-size:13px; color:var(--muted)
-    }
-
-    /* Gauge */
-    .gauge-wrap{display:flex; gap:16px; align-items:center}
-    .gauge{position:relative;width:120px;height:120px}
-    canvas#gaugeCanvas{width:120px;height:120px}
-    .gauge .center{position:absolute; inset:0; display:grid; place-items:center; font-size:22px; font-weight:700}
-
-    /* Modal */
-    .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55); padding:20px;}
-    .modal.open{display:grid}
-    .sheet{width:min(620px, 96vw); background:var(--panel); border-radius:20px; border:1px solid rgba(255,255,255,.06); box-shadow: var(--shadow); padding:18px}
-    .row{display:flex; gap:12px; align-items:center}
-    textarea, input[type="text"]{width:100%; background:#0a1411; border:1px solid rgba(255,255,255,.08); color:var(--text); padding:12px 14px; border-radius:12px; font-size:15px}
-    .actions{display:flex; gap:10px; justify-content:flex-end; margin-top:12px}
-    .btn{background:#0e1714;color:var(--text); border:1px solid rgba(255,255,255,.08); padding:10px 14px; border-radius:12px; cursor:pointer}
-    .btn.primary{background:linear-gradient(160deg, var(--accent), var(--accent-2)); border:none; color:#07381f; font-weight:700}
-    .btn.ghost{background:transparent}
-    .btn.danger{background:linear-gradient(160deg, #ff8a8a, #ff5d5d); color:#2a0000; border:none}
-    .btn[disabled]{opacity:.5; cursor:not-allowed}
-
-    /* Rating */
-    .rating{display:flex; gap:10px; align-items:center}
-    .dot{width:28px;height:28px;border-radius:50%; display:inline-grid; place-items:center; cursor:pointer;
-      background:#0a1411; border:1px solid rgba(255,255,255,.08); font-size:12px; color:var(--muted)}
-    .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
-
-    /* History */
-    .list{display:flex; flex-direction:column; gap:10px; max-height:460px; overflow:auto; padding-right:4px}
-    .item{display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; padding:12px; background:var(--panel-2); border-radius:14px; border:1px solid rgba(255,255,255,.06)}
-    .item .date{font-size:12px;color:var(--muted)}
-    .item .note{font-size:14px}
-
-    .toolbar{display:flex; gap:10px; flex-wrap:wrap}
-    .hint{color:var(--muted); font-size:12px}
-
-    /* Chart */
-    #chart{width:100%;height:220px; background:#0b1512; border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+    /* Curriculum Map */
+    .map{display:grid;grid-template-columns:repeat(7,1fr); gap:8px}
+    .node{background:#0b1512;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;font-size:12px; cursor:pointer}
+    .node.lock{opacity:.45;filter:grayscale(.3)}
+    .node.active{outline:2px solid var(--accent)}
 
     /* Tabs */
-    .tabs{display:flex; gap:8px; margin-bottom:8px}
-    .tab{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.08); cursor:pointer; font-size:13px; color:var(--muted)}
-    .tab.active{background:var(--accent); color:#07381f; border:none; font-weight:700}
+    .tabs{display:flex;gap:8px;margin-bottom:8px}
+    .tab{padding:8px 12px;border-radius:999px;border:1px solid var(--line);cursor:pointer;font-size:13px;color:var(--muted)}
+    .tab.active{background:var(--accent);color:#07381f;border:none;font-weight:700}
 
-    footer{margin-top:18px; color:var(--muted); font-size:12px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
-    a{color:var(--ok)}
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);padding:18px}
+    .modal.open{display:grid}
+    .sheet{width:min(720px,96vw); background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--sh); padding:16px}
+    .row{display:flex;gap:10px;align-items:center}
+    textarea,input[type="text"]{width:100%; background:#0a1411;border:1px solid var(--line); color:var(--ink); padding:12px 14px; border-radius:12px; font-size:15px}
+    .rating{display:flex;gap:8px}
+    .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#0a1411;border:1px solid var(--line);cursor:pointer;color:var(--muted);font-size:12px}
+    .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
+
+    /* Charts */
+    #trend{width:100%;height:200px;background:#0b1512;border:1px solid var(--line);border-radius:14px}
+
+    footer{margin-top:14px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    a{color:var(--good)}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
+        <div class="logo"></div>
         <div>
           <h1>Valuefulness</h1>
-          <div class="tag">Daily pursuit of value‑sufficiency</div>
+          <div class="sub">Operationalizing Mazzone: value‑sufficiency via progressive drills</div>
         </div>
       </div>
-      <div class="toolbar">
-        <button class="btn" id="remindBtn">Set daily reminder</button>
+      <div class="flex">
+        <button class="btn" id="installBtn" style="display:none">Install</button>
         <button class="btn" id="exportBtn">Export</button>
-        <label class="btn" for="importFile" title="Import backup">Import<input id="importFile" type="file" accept="application/json" hidden></label>
-        <button class="btn" id="resetBtn" title="Delete all data">Reset</button>
+        <label class="btn" for="importFile">Import<input id="importFile" type="file" accept="application/json" hidden></label>
+        <button class="btn" id="resetBtn">Reset</button>
       </div>
     </header>
 
     <div class="grid">
-      <!-- Left: ritual + gauge + chart -->
       <section class="card">
-        <h2>Today’s ritual</h2>
-        <div class="help">One tap a day. Name one thing that felt valuable. Optional note. Done.</div>
-        <div class="big-cta">
-          <button id="tap" class="tap">Tap to log today</button>
-          <div class="stats">
-            <div class="pill" id="streakPill">🔥 Streak: 0</div>
-            <div class="pill" id="bestPill">🏆 Best: 0</div>
-            <div class="pill" id="daysPill">📅 Days logged: 0</div>
+        <div class="h2">Daily Session</div>
+        <div class="muted">Three parts. Audio‑guided. Difficulty increases with your level.</div>
+        <div class="big">
+          <button class="cta" id="startBtn">Start</button>
+          <div class="flex" style="margin-top:10px">
+            <div class="pill" id="lvlPill">Lvl 1 • Novice</div>
+            <div class="pill" id="streakPill">🔥 Streak 0</div>
+            <div class="pill" id="bestPill">🏆 Best 0</div>
+            <div class="pill" id="vqiPill">VQI --</div>
           </div>
         </div>
 
-        <div style="height:16px"></div>
-
+        <div style="height:12px"></div>
         <div class="card" style="padding:12px">
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <canvas id="gaugeCanvas" width="120" height="120" aria-label="Value Sufficiency Gauge"></canvas>
-              <div class="center" id="gaugeCenter">--</div>
-            </div>
-            <div>
-              <div style="font-weight:700; font-size:15px">Value‑Sufficiency Index</div>
-              <div class="help">EMA of last 30 entries (1‑5). Higher = more frequent felt sufficiency.</div>
-              <div style="height:12px"></div>
-              <div id="promptText" class="hint"></div>
-            </div>
-          </div>
+          <div class="h2">Curriculum Map</div>
+          <div class="muted">Unlock chapters by accruing experience. Based on the book: Method → Value → Mythology → Ethics → Meaning → Mind → Cognition.</div>
+          <div class="map" id="map"></div>
         </div>
 
-        <div style="height:16px"></div>
-        <h2>Trend</h2>
-        <canvas id="chart" width="900" height="220" aria-label="Trend chart"></canvas>
+        <div style="height:12px"></div>
+        <div class="h2">Trend</div>
+        <canvas id="trend" width="900" height="200"></canvas>
       </section>
 
-      <!-- Right: history -->
       <aside class="card">
         <div class="tabs">
-          <button class="tab active" data-view="history">History</button>
+          <button class="tab active" data-view="quests">Quests</button>
+          <button class="tab" data-view="history">History</button>
           <button class="tab" data-view="settings">Settings</button>
         </div>
-        <div id="view-history">
-          <div class="help" style="margin-bottom:8px">Click an entry to edit. Keep notes short. Focus on the why.</div>
-          <div class="list" id="list"></div>
+        <div id="view-quests">
+          <div class="muted">Weekly progressive challenges. Designed to train equanimity in the presence of loss and absence.</div>
+          <div id="quests"></div>
+        </div>
+        <div id="view-history" style="display:none">
+          <div class="muted">Edit entries. Ratings feed VQI (Value Quality Index).</div>
+          <div id="history"></div>
         </div>
         <div id="view-settings" style="display:none">
-          <div class="help">All data stays on your device.</div>
-          <div style="height:12px"></div>
-          <label class="hint">Daily reminder time</label>
-          <div class="row">
-            <input type="time" id="remindTime"/>
-            <button class="btn" id="saveTime">Save</button>
+          <label class="muted">Daily reminder</label>
+          <div class="row" style="margin-top:6px">
+            <input type="time" id="remTime"/>
+            <button class="btn" id="setRem">Set</button>
           </div>
-          <div style="height:12px"></div>
-          <button class="btn" id="installBtn" style="display:none">Install app</button>
-          <div style="height:12px"></div>
-          <div class="hint">Version <span id="ver"></span>. Offline‑ready.</div>
+          <div style="height:8px"></div>
+          <div class="muted">Voice guidance</div>
+          <div class="row" style="margin-top:6px">
+            <button class="btn" id="voiceTest">Test Voice</button>
+            <select id="voiceSelect" class="btn"></select>
+          </div>
         </div>
       </aside>
     </div>
 
     <footer>
-      <div>Designed for zero‑friction daily use. No accounts. No feeds. One action.</div>
-      <div><span class="hint">Keyboard:</span> L = log today, S = settings, H = history</div>
+      <div>No accounts. Local only. Offline‑ready.</div>
+      <div class="muted">Shortcuts: Space = start/next • H = history • Q = quests</div>
     </footer>
   </div>
 
-  <!-- Modal: log entry -->
+  <!-- Modal: Session Flow -->
   <div class="modal" id="modal">
     <div class="sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
-        <div style="font-weight:700">Daily log</div>
-        <button class="btn ghost" id="closeModal" aria-label="Close">✕</button>
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:700">Session</div>
+        <button class="btn" id="closeModal">✕</button>
       </div>
-      <div style="height:6px"></div>
-      <div id="dynPrompt" class="help" style="margin-bottom:8px"></div>
+      <div id="stageTitle" class="h2" style="margin-top:6px">—</div>
+      <div id="stageText" class="muted" style="min-height:44px">—</div>
 
-      <div class="rating" aria-label="Rate today’s felt sufficiency">
-        <span class="hint" style="min-width:110px">Felt sufficiency:</span>
-        <div id="ratingDots"></div>
-      </div>
-
-      <div style="height:10px"></div>
-      <div class="row">
-        <textarea id="note" rows="4" placeholder="Name one thing that felt valuable today… (optional)"></textarea>
-        <button class="btn" id="micBtn" title="Dictate note">🎤</button>
+      <div style="height:8px"></div>
+      <div class="row" id="ratingRow" style="display:none">
+        <span class="muted" style="min-width:120px">Felt sufficiency</span>
+        <div class="rating" id="ratingDots"></div>
       </div>
 
-      <div class="actions">
-        <button class="btn" id="todayDoneBtn" style="display:none" disabled>Today already logged</button>
-        <button class="btn" id="clearBtn">Clear</button>
-        <button class="btn primary" id="saveBtn">Save</button>
+      <div style="height:8px"></div>
+      <textarea id="answer" rows="4" placeholder="Type or dictate…"></textarea>
+      <div class="row" style="justify-content:flex-end;margin-top:8px">
+        <button class="btn" id="micBtn">🎤 Dictate</button>
+        <button class="btn primary" id="nextBtn">Next</button>
       </div>
     </div>
   </div>
 
   <script>
-  // --- Data model and storage ----------------------------------------------
-  const VERSION = '1.0.0';
-  const LS_KEY = 'pov_data_v1';
-  const state = load();
+  // -------- Program model ---------------------------------------------------
+  const VERSION='2.0.0';
+  const LS_KEY='pov_prog_v2';
+  const CHAPTERS=[
+    {id:1, key:'method', name:'Method', xp:0},
+    {id:2, key:'value', name:'Value', xp:80},
+    {id:3, key:'myth', name:'Mythology', xp:220},
+    {id:4, key:'ethics', name:'Ethics', xp:420},
+    {id:5, key:'meaning', name:'Meaning', xp:680},
+    {id:6, key:'mind', name:'Mind', xp:1000},
+    {id:7, key:'cognition', name:'Cognition', xp:1400},
+  ];
+  const STAGES=['Micro‑lesson','Guided Drill','Commitment'];
+
+  const DRILLS={
+    method:[
+      {t:'Micro‑lesson', s:'Philosophy as personal inquiry. You are the instrument. We train the structure: choice → value → sufficiency.', time:60},
+      {t:'Guided Drill', s:'Name one present loss or absence. Now locate a value that does not depend on reversing that loss.', time:120, rate:true},
+      {t:'Commitment', s:'One tiny act that affirms value without external validation before tomorrow.', time:30}
+    ],
+    value:[
+      {t:'Micro‑lesson', s:'Value is a product of selection and preference in consciousness. We practice deliberate selection.', time:75},
+      {t:'Guided Drill', s:'From today, extract a “value‑kernel” (quality, not object). Phrase it in six words.', time:150, rate:true},
+      {t:'Commitment', s:'Repeat the kernel once today in context of inconvenience.', time:30}
+    ],
+    myth:[
+      {t:'Micro‑lesson', s:'We project values onto stories and roles. Today we unhook.', time:75},
+      {t:'Guided Drill', s:'Identify a role you over‑value (e.g., achiever). State one value independent of that role.', time:150, rate:true},
+      {t:'Commitment', s:'One action today that contradicts the role but keeps the value.', time:30}
+    ],
+    ethics:[
+      {t:'Micro‑lesson', s:'From rules to reflexivity. Aim at value‑sufficiency, not approval.', time:90},
+      {t:'Guided Drill', s:'Recall a recent judgment of another. Replace it with a value you can enact now.', time:150, rate:true},
+      {t:'Commitment', s:'Enact the replacement once.', time:30}
+    ],
+    meaning:[
+      {t:'Micro‑lesson', s:'Meaning survives loss by sufficiency in the present.', time:90},
+      {t:'Guided Drill', s:'Imagine a future plan fails. Name what remains valuable today.', time:150, rate:true},
+      {t:'Commitment', s:'Do one small, here‑and‑now valuable act.', time:30}
+    ],
+    mind:[
+      {t:'Micro‑lesson', s:'Mind is divisible and gradated. We can train direction.', time:90},
+      {t:'Guided Drill', s:'Direct attention to sensation, then value quality without object for 60s.', time:180, rate:true},
+      {t:'Commitment', s:'60s object‑free valuing before bed.', time:30}
+    ],
+    cognition:[
+      {t:'Micro‑lesson', s:'Cognition supports value. Avoid self‑indulgent justification.', time:90},
+      {t:'Guided Drill', s:'Write one sentence of support, then delete half the words. Keep the value clear.', time:150, rate:true},
+      {t:'Commitment', s:'Use the terse sentence once.', time:30}
+    ]
+  };
 
   function load(){
-    try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {
-      entries: [], // {date:'YYYY-MM-DD', rating:1..5, note:''}
-      bestStreak: 0,
-      settings: { reminder: null, reminderTime: '09:00' },
-    }; }catch(e){ return {entries:[], bestStreak:0, settings:{reminder:null, reminderTime:'09:00'}} }
+    try{return JSON.parse(localStorage.getItem(LS_KEY))||{entries:[], xp:0, best:0, streak:0, level:1, chapter:1, settings:{time:'09:00', voice:null}}}catch(e){return {entries:[], xp:0, best:0, streak:0, level:1, chapter:1, settings:{time:'09:00', voice:null}}}
   }
+  const state=load();
   function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 
-  function todayStr(d=new Date()){
-    const tzOffset = d.getTimezoneOffset(); // keep local day
-    const iso = new Date(d.getTime() - tzOffset*60000).toISOString();
-    return iso.slice(0,10);
-  }
-  function dateStr(d){
-    return new Date(d + 'T00:00:00').toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
-  }
+  // -------- Leveling & progression -----------------------------------------
+  function xpForLevel(l){ return 50*l*l; } // quadratic
+  function levelFromXP(x){ let l=1; while(x >= xpForLevel(l+1)) l++; return l; }
+  function grantXP(n){ state.xp += n; const newLevel = levelFromXP(state.xp); if(newLevel>state.level) state.level=newLevel; // chapter unlocks
+    const nextChap = CHAPTERS.findLast(c=> state.xp>=c.xp); if(nextChap) state.chapter = Math.max(state.chapter, nextChap.id); save(); }
 
-  // --- Streaks ---------------------------------------------------------------
-  function computeStreaks(){
-    if(!state.entries.length) return {streak:0, best: state.bestStreak||0};
-    const dates = [...new Set(state.entries.map(e=>e.date))].sort();
-    let streak=0, best=state.bestStreak||0;
-    const today=todayStr();
-    // Walk backwards from today
-    let day = new Date(today+'T00:00:00');
-    for(let i=0;;i++){
-      const ds = todayStr(day);
-      if(dates.includes(ds)) { streak++; day.setDate(day.getDate()-1); }
-      else {
-        // allow one grace gap if yesterday missing but day before exists? No. Keep strict.
-        break;
-      }
-    }
-    // Compute best
-    let cur=1;
-    for(let i=1;i<dates.length;i++){
-      const d1=new Date(dates[i-1]+'T00:00:00');
-      const d2=new Date(dates[i]+'T00:00:00');
-      const diff=(d2-d1)/(1000*60*60*24);
-      if(diff===1) cur++; else { if(cur>best) best=cur; cur=1; }
-    }
-    if(cur>best) best=cur;
-    // Update stored best if improved
-    if(best>state.bestStreak){ state.bestStreak=best; save(); }
-    return {streak, best};
-  }
-
-  // --- EMA for Value‑Sufficiency -------------------------------------------
   function vsiEMA(N=30){
-    const k = 2/(N+1);
-    const vals = state.entries.slice(-N).map(e=>e.rating||3);
-    if(!vals.length) return null;
-    let ema = vals[0];
-    for(let i=1;i<vals.length;i++) ema = vals[i]*k + ema*(1-k);
-    return +ema.toFixed(2);
+    const k=2/(N+1); const vals=state.entries.slice(-N).map(e=>e.rating||3); if(!vals.length) return null; let ema=vals[0]; for(let i=1;i<vals.length;i++) ema=vals[i]*k+ema*(1-k); return +ema.toFixed(2);
   }
 
-  // --- Adaptive prompts -----------------------------------------------------
-  const PROMPTS = [
-    'Name one thing that felt valuable today.',
-    'What, precisely, made that feel enough?',
-    'Remove the object. What quality remains valuable?',
-    'Who else benefited from that value?',
-    'What would make this valuable with nothing added?',
-  ];
-  function currentPrompt(){
-    const n = state.entries.length;
-    const idx = Math.min(Math.floor(n/7), PROMPTS.length-1);
-    return PROMPTS[idx];
-  }
+  // -------- UI refs ---------------------------------------------------------
+  const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+  const startBtn=$('#startBtn'), lvlPill=$('#lvlPill'), streakPill=$('#streakPill'), bestPill=$('#bestPill'), vqiPill=$('#vqiPill');
+  const trend=$('#trend'); const map=$('#map'); const questsEl=$('#quests'); const historyEl=$('#history');
+  const remTime=$('#remTime'), setRem=$('#setRem');
+  const voiceSelect=$('#voiceSelect'), voiceTest=$('#voiceTest');
 
-  // --- UI elements ----------------------------------------------------------
-  const $ = s=>document.querySelector(s);
-  const $all = s=>Array.from(document.querySelectorAll(s));
-  const tapBtn = $('#tap');
-  const listEl = $('#list');
-  const streakPill = $('#streakPill');
-  const bestPill = $('#bestPill');
-  const daysPill = $('#daysPill');
-  const promptText = $('#promptText');
-  const verEl = $('#ver'); verEl.textContent = VERSION;
+  const modal=$('#modal'), stageTitle=$('#stageTitle'), stageText=$('#stageText'), nextBtn=$('#nextBtn'), closeModal=$('#closeModal');
+  const ratingRow=$('#ratingRow'), ratingDots=$('#ratingDots'); const answer=$('#answer'); const micBtn=$('#micBtn');
 
-  // Modal
-  const modal = $('#modal');
-  const closeModal = $('#closeModal');
-  const dynPrompt = $('#dynPrompt');
-  const note = $('#note');
-  const micBtn = $('#micBtn');
-  const ratingDots = $('#ratingDots');
-  const clearBtn = $('#clearBtn');
-  const saveBtn = $('#saveBtn');
-  const todayDoneBtn = $('#todayDoneBtn');
-
-  // Settings
-  const remindBtn = $('#remindBtn');
-  const remindTime = $('#remindTime'); remindTime.value = state.settings.reminderTime || '09:00';
-  const saveTime = $('#saveTime');
-  const installBtn = $('#installBtn');
-  const exportBtn = $('#exportBtn');
-  const importFile = $('#importFile');
-  const resetBtn = $('#resetBtn');
-
-  // Tabs
-  $all('.tab').forEach(t=> t.addEventListener('click', ()=>{
-    $all('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    const v = t.dataset.view;
-    $('#view-history').style.display = v==='history'? 'block':'none';
-    $('#view-settings').style.display = v==='settings'? 'block':'none';
-  }));
-
-  // --- Build rating dots ----------------------------------------------------
-  let curRating = 4; // pre‑select mild positivity to reduce friction
-  function drawDots(sel=curRating){
-    ratingDots.innerHTML='';
-    for(let i=1;i<=5;i++){
-      const d=document.createElement('button');
-      d.className='dot' + (i===sel?' sel':'');
-      d.textContent=i;
-      d.setAttribute('aria-label','Rating '+i);
-      d.onclick=()=>{curRating=i; drawDots(i); drawGauge();};
-      ratingDots.appendChild(d);
-    }
-  }
-  drawDots();
-
-  // --- Modal open/close -----------------------------------------------------
-  function openModal(){
-    dynPrompt.textContent = currentPrompt();
-    note.value='';
-    todayDoneBtn.style.display='none';
-    saveBtn.disabled=false;
-    if(isTodayLogged()){
-      todayDoneBtn.style.display='inline-flex';
-      saveBtn.disabled=false; // allow second entry if desired
-    }
-    modal.classList.add('open');
-    note.focus({preventScroll:true});
-  }
-  function close(){ modal.classList.remove('open'); }
-  closeModal.onclick = close; document.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
-
-  tapBtn.onclick = openModal;
-
-  clearBtn.onclick = ()=>{ note.value=''; };
-
-  saveBtn.onclick = ()=>{
-    const entry = { date: todayStr(), rating: curRating, note: note.value.trim() };
-    state.entries.push(entry);
-    save();
-    render();
-    close();
-  };
-
-  // --- Voice dictation ------------------------------------------------------
-  let recognizer = null; let listening=false;
-  try{ const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if(SR){
-    recognizer = new SR(); recognizer.lang = navigator.language || 'en-US'; recognizer.interimResults=true;
-    recognizer.onresult = e=>{ const t = Array.from(e.results).map(r=>r[0].transcript).join(' '); note.value = t; };
-    recognizer.onend = ()=>{ listening=false; micBtn.textContent='🎤'; };
-  }}catch(e){}
-  micBtn.onclick = ()=>{
-    if(!recognizer){ alert('Speech recognition not supported in this browser.'); return; }
-    if(listening){ recognizer.stop(); return; }
-    listening=true; micBtn.textContent='■'; recognizer.start();
-  };
-
-  // --- History list ---------------------------------------------------------
-  function renderList(){
-    const arr = [...state.entries].sort((a,b)=> a.date<b.date?1:-1);
-    listEl.innerHTML = arr.map((e,i)=>{
-      const idx = state.entries.indexOf(e);
-      const r = e.rating||3; const color = r>=4? 'color:var(--ok)': r<=2? 'color:var(--warn)': 'color:var(--muted)';
-      return `<div class="item" data-idx="${idx}">
-        <div>
-          <div class="date">${dateStr(e.date)}</div>
-          <div style="${color}; font-weight:700">${'•'.repeat(r)}${'·'.repeat(5-r)}</div>
-        </div>
-        <div class="note">${e.note? e.note.replace(/[<>&]/g, s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s])): '<span class="hint">(no note)</span>'}</div>
-        <div class="row">
-          <button class="btn" data-act="edit">Edit</button>
-          <button class="btn danger" data-act="del">Delete</button>
-        </div>
-      </div>`;
-    }).join('');
-    // wire buttons
-    $all('.item').forEach(it=>{
-      const idx = +it.dataset.idx;
-      it.querySelector('[data-act="edit"]').onclick = ()=> editEntry(idx);
-      it.querySelector('[data-act="del"]').onclick = ()=> delEntry(idx);
-    });
-  }
-  function editEntry(idx){
-    const e = state.entries[idx];
-    curRating = e.rating||3; drawDots(curRating);
-    dynPrompt.textContent = 'Edit entry';
-    note.value = e.note||'';
-    modal.classList.add('open');
-    saveBtn.onclick = ()=>{
-      e.rating = curRating;
-      e.note = note.value.trim();
-      save(); render(); close();
-      // restore save handler for normal flow
-      saveBtn.onclick = defaultSave;
-    };
-  }
-  const defaultSave = saveBtn.onclick;
-  function delEntry(idx){
-    if(!confirm('Delete this entry?')) return;
-    state.entries.splice(idx,1); save(); render();
-  }
-
-  function isTodayLogged(){ return state.entries.some(e=>e.date===todayStr()); }
-
-  // --- Pills and prompt -----------------------------------------------------
-  function renderMeta(){
-    const {streak, best} = computeStreaks();
-    streakPill.textContent = `🔥 Streak: ${streak}`;
-    bestPill.textContent = `🏆 Best: ${best}`;
-    daysPill.textContent = `📅 Days logged: ${state.entries.length}`;
-    promptText.textContent = currentPrompt();
-    tapBtn.disabled = false; // keep enabled always
-    if(isTodayLogged()) tapBtn.textContent = 'Add another note'; else tapBtn.textContent='Tap to log today';
-  }
-
-  // --- Gauge ---------------------------------------------------------------
-  function drawGauge(){
-    const cvs = document.getElementById('gaugeCanvas'); const ctx = cvs.getContext('2d');
-    const w=cvs.width, h=cvs.height; ctx.clearRect(0,0,w,h);
-    const cx=w/2, cy=h/2, r=50; const start = Math.PI*.8, end = Math.PI*2.2; // 1.4π span
-    // background arc
-    ctx.lineWidth=12; ctx.strokeStyle='rgba(255,255,255,.10)'; ctx.beginPath(); ctx.arc(cx,cy,r,start,end); ctx.stroke();
-    // value arc
-    const ema = vsiEMA()||0; const norm = Math.min(1, Math.max(0, (ema-1)/4));
-    const valAng = start + (end-start)*norm;
-    const grad = ctx.createLinearGradient(0,0,w,0); grad.addColorStop(0,'#4affb4'); grad.addColorStop(1,'#12a65a');
-    ctx.strokeStyle=grad; ctx.beginPath(); ctx.arc(cx,cy,r,start,valAng); ctx.stroke();
-    // center label
-    const center = document.getElementById('gaugeCenter');
-    center.textContent = ema? ema.toFixed(2): '--';
-  }
-
-  // --- Chart ---------------------------------------------------------------
-  function drawChart(){
-    const cvs = document.getElementById('chart'); const ctx = cvs.getContext('2d');
-    const w=cvs.width, h=cvs.height; ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = '#0a1411'; ctx.fillRect(0,0,w,h);
-    // axes
-    ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1; ctx.beginPath();
-    for(let i=1;i<=4;i++){ const y=h - i*(h/5); ctx.moveTo(40,y); ctx.lineTo(w-10,y);} ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='12px ui-sans-serif';
-    for(let i=1;i<=5;i++){ const y=h - i*(h/5); ctx.fillText(String(i), 8, y+4); }
-
-    const points = [...state.entries].slice(-60);
-    if(points.length<2){ ctx.fillStyle='rgba(255,255,255,.5)'; ctx.fillText('Need more entries for trend', w/2-90, h/2); return; }
-    // scale
-    const padL=40, padR=10, padT=10, padB=22;
-    const xmin=0, xmax=points.length-1;
-    const xScale = (i)=> padL + (i-xmin)/(xmax-xmin) * (w-padL-padR);
-    const yScale = (r)=> padT + (1-(r-1)/4) * (h-padT-padB);
-
-    // line
-    ctx.strokeStyle='#2bd671'; ctx.lineWidth=2.2; ctx.beginPath();
-    points.forEach((e,i)=>{ const x=xScale(i), y=yScale(e.rating||3); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
-    ctx.stroke();
-
-    // markers
-    ctx.fillStyle='#2bd671';
-    points.forEach((e,i)=>{ const x=xScale(i), y=yScale(e.rating||3); ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill(); });
-  }
-
-  // --- Reminders -----------------------------------------------------------
-  async function requestNotify(){
-    if(!('Notification' in window)) { alert('Notifications not supported.'); return false; }
-    if(Notification.permission==='granted') return true;
-    const p = await Notification.requestPermission();
-    return p==='granted';
-  }
-  remindBtn.onclick = async ()=>{
-    const ok = await requestNotify(); if(!ok) return;
-    scheduleReminderTick();
-    alert('Daily reminder is set for '+ (state.settings.reminderTime||'09:00') +'. Keep a tab open for on‑time alerts.');
-  };
-  saveTime.onclick = ()=>{ state.settings.reminderTime = remindTime.value||'09:00'; save(); scheduleReminderTick(true); };
-
-  function scheduleReminderTick(reset=false){
-    if(reset && window._remTimer){ clearInterval(window._remTimer); }
-    try{ if(window._remTimer) return; }catch(e){}
-    window._remTimer = setInterval(()=>{
-      const t = state.settings.reminderTime||'09:00';
-      const [hh,mm] = t.split(':').map(x=>+x);
-      const now = new Date();
-      if(now.getHours()===hh && now.getMinutes()===mm && now.getSeconds()<5){
-        const already = isTodayLogged();
-        new Notification('Valuefulness', { body: already? 'Optional second note.' : 'Time to log today. One thing that felt valuable.' });
-      }
-    }, 1000*5);
-  }
-
-  // --- Export / Import / Reset --------------------------------------------
-  exportBtn.onclick = ()=>{
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='valuefulness-backup.json'; a.click(); URL.revokeObjectURL(a.href);
-  };
-  importFile.onchange = async (e)=>{
-    const f = e.target.files[0]; if(!f) return; const t = await f.text();
-    try{ const obj = JSON.parse(t); if(!obj.entries) throw new Error('Invalid'); Object.assign(state, obj); save(); render(); }
-    catch(err){ alert('Invalid backup file.'); }
-    finally{ e.target.value=''; }
-  };
-  resetBtn.onclick = ()=>{
-    if(!confirm('This deletes all entries. Continue?')) return;
-    localStorage.removeItem(LS_KEY); location.reload();
-  };
-
-  // --- Keyboard shortcuts ---------------------------------------------------
-  document.addEventListener('keydown', e=>{
-    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
-    if(e.key.toLowerCase()==='l') openModal();
-    if(e.key.toLowerCase()==='s') $all('.tab')[1].click();
-    if(e.key.toLowerCase()==='h') $all('.tab')[0].click();
+  // -------- Tabs ------------------------------------------------------------
+  $$('.tab').forEach(t=> t.onclick=()=>{ $$('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+    ['view-quests','view-history','view-settings'].forEach(id=> $('#'+id).style.display='none');
+    $('#view-'+t.dataset.view).style.display='block';
   });
 
-  // --- PWA: create a blob manifest + service worker -------------------------
-  (function(){
-    // Manifest via blob so we stay single‑file
-    const manifest = { name:'Valuefulness', short_name:'Valuefulness', start_url:'./', display:'standalone', background_color:'#0c1210', theme_color:'#2bd671', icons:[] };
-    const mblob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-    const link = document.createElement('link'); link.rel='manifest'; link.href=URL.createObjectURL(mblob); document.head.appendChild(link);
+  // -------- Speech synthesis / recognition ---------------------------------
+  let voices=[]; function loadVoices(){ voices=window.speechSynthesis? window.speechSynthesis.getVoices():[]; voiceSelect.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name} (${v.lang})</option>`).join(''); }
+  if(window.speechSynthesis){ window.speechSynthesis.onvoiceschanged = loadVoices; loadVoices(); }
+  function speak(txt){ if(!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(txt); if(state.settings.voice){ const v=voices[+state.settings.voice]; if(v) u.voice=v; } u.rate=1; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }
+  voiceTest.onclick=()=>{ state.settings.voice=voiceSelect.value; save(); speak('Value is trained. Not found. This is your coach.'); };
 
-    // Service worker via blob for offline cache
-    if('serviceWorker' in navigator){
-      const swCode = `
-        const CACHE='pov-cache-v1';
-        self.addEventListener('install', e=>{ e.waitUntil( caches.open(CACHE).then(c=>c.addAll(['./'])) ); self.skipWaiting(); });
-        self.addEventListener('activate', e=>{ e.waitUntil( caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))) ); self.clients.claim(); });
-        self.addEventListener('fetch', e=>{
-          const url=new URL(e.request.url);
-          if(url.origin===location.origin){
-            e.respondWith( caches.match(e.request).then(r=> r||fetch(e.request).then(res=>{ const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res; }).catch(()=>caches.match('./')) ) );
-          }
-        });`;
-      const blob = new Blob([swCode], {type:'text/javascript'});
-      const swUrl = URL.createObjectURL(blob);
-      navigator.serviceWorker.register(swUrl).catch(()=>{});
-    }
-  })();
+  let rec=null, listening=false; try{ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(SR){ rec=new SR(); rec.lang=navigator.language||'en-US'; rec.interimResults=true; rec.onresult=e=>{ const t=[...e.results].map(r=>r[0].transcript).join(' '); answer.value=t; }; rec.onend=()=>{listening=false; micBtn.textContent='🎤 Dictate';}; }}catch(e){}
+  micBtn.onclick=()=>{ if(!rec){ alert('Speech recognition not supported.'); return; } if(listening){ rec.stop(); return; } listening=true; micBtn.textContent='■ Stop'; rec.start(); };
 
-  // --- Initial render -------------------------------------------------------
-  function render(){ renderMeta(); drawGauge(); drawChart(); renderList(); }
+  // -------- Map -------------------------------------------------------------
+  function renderMap(){ map.innerHTML=''; CHAPTERS.forEach((c,i)=>{ const el=document.createElement('div'); el.className='node'+(c.id>state.chapter?' lock':'')+(c.id===state.chapter?' active':''); el.textContent=(i+1)+'. '+c.name; el.onclick=()=>{ if(c.id<=state.chapter){ state.chapter=c.id; save(); render(); } }; map.appendChild(el); }); }
+
+  // -------- Quests ----------------------------------------------------------
+  function weeklyQuests(){
+    const week = Math.floor(Date.now()/(1000*60*60*24*7));
+    const base=[
+      {k:'loss_exposure', t:'Loss Exposure', d:'Voluntarily skip a minor convenience today. Preserve the value without it.'},
+      {k:'kernel_capture', t:'Kernel Capture', d:'Write three 6‑word value‑kernels from real moments.'},
+      {k:'object_free', t:'Object‑free Valuing', d:'60 seconds valuing without an object, twice a day.'}
+    ];
+    return base.map((q,i)=>({ ...q, id:q.k+'_'+week, done: state.entries.some(e=>e.questId===q.k+'_'+week) }));
+  }
+  function renderQuests(){ const qs=weeklyQuests(); questsEl.innerHTML = qs.map(q=>`<div class="card" style="margin-top:8px"><div class="h2">${q.t}</div><div class="muted">${q.d}</div><div style="height:6px"></div><button class="btn" ${q.done?'disabled':''} data-id="${q.id}">${q.done?'Completed':'Mark done'}</button></div>`).join('');
+    Array.from(questsEl.querySelectorAll('button')).forEach(b=> b.onclick=()=>{ const id=b.dataset.id; state.entries.push({date:today(), chapter:state.chapter, rating:4, note:'Quest '+id+' complete', questId:id}); grantXP(25); save(); render(); });
+  }
+
+  // -------- History ---------------------------------------------------------
+  function today(){ const d=new Date(); const z=d.getTimezoneOffset(); return new Date(d.getTime()-z*60000).toISOString().slice(0,10); }
+  function renderHistory(){ const arr=[...state.entries].sort((a,b)=> a.date<b.date?1:-1); historyEl.innerHTML = arr.map((e,i)=>{
+    const color = (e.rating>=4)?'color:var(--good)':(e.rating<=2)?'color:var(--warn)':'color:var(--muted)';
+    return `<div class="card" style="margin-top:8px"><div class="row" style="justify-content:space-between"><div><div class="muted">${new Date(e.date+'T00:00:00').toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</div><div style="${color};font-weight:700">${'•'.repeat(e.rating||3)}${'·'.repeat(5-(e.rating||3))}</div></div><div class="row"><button class="btn" data-act="edit" data-idx="${i}">Edit</button><button class="btn" data-act="del" data-idx="${i}">Delete</button></div></div><div style="margin-top:6px">${(e.note||'').replace(/[<>&]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))||'<span class="muted">(no note)</span>'}</div></div>`;
+  }).join('');
+    Array.from(historyEl.querySelectorAll('[data-act="edit"]')).forEach(b=> b.onclick=()=> editEntry(+b.dataset.idx));
+    Array.from(historyEl.querySelectorAll('[data-act="del"]')).forEach(b=> b.onclick=()=> delEntry(+b.dataset.idx));
+  }
+  function editEntry(i){ const e=state.entries.sort((a,b)=> a.date<b.date?1:-1)[i]; if(!e) return; openSession('Edit Entry', {t:'Edit', s:'Adjust rating and note.', time:0, rate:true}, e); }
+  function delEntry(i){ if(!confirm('Delete this entry?')) return; const arr=[...state.entries].sort((a,b)=> a.date<b.date?1:-1); const target=arr[i]; const idx=state.entries.indexOf(target); if(idx>-1){ state.entries.splice(idx,1); save(); render(); } }
+
+  // -------- Trend chart -----------------------------------------------------
+  function drawTrend(){ const ctx=trend.getContext('2d'); const w=trend.width, h=trend.height; ctx.clearRect(0,0,w,h); ctx.fillStyle='#0a1411'; ctx.fillRect(0,0,w,h); ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.beginPath(); for(let i=1;i<=4;i++){ const y=h - i*(h/5); ctx.moveTo(40,y); ctx.lineTo(w-10,y);} ctx.stroke(); ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='12px ui-sans-serif'; for(let i=1;i<=5;i++){ const y=h - i*(h/5); ctx.fillText(String(i), 8, y+4); }
+    const pts=[...state.entries].slice(-90); if(pts.length<2){ ctx.fillText('Do sessions to see trend', w/2-70, h/2); return; }
+    const padL=40, padR=10, padT=10, padB=20; const xmin=0, xmax=pts.length-1; const x=i=> padL+(i-xmin)/(xmax-xmin)*(w-padL-padR); const y=r=> padT+(1-(r-1)/4)*(h-padT-padB);
+    ctx.strokeStyle=varGet('--accent'); ctx.lineWidth=2.2; ctx.beginPath(); pts.forEach((e,i)=>{ const X=x(i), Y=y(e.rating||3); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }); ctx.stroke(); ctx.fillStyle=varGet('--accent'); pts.forEach((e,i)=>{ const X=x(i), Y=y(e.rating||3); ctx.beginPath(); ctx.arc(X,Y,2.5,0,Math.PI*2); ctx.fill(); }); }
+  function varGet(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // -------- Streaks & meta --------------------------------------------------
+  function computeStreak(){ if(!state.entries.length) return 0; const set=new Set(state.entries.map(e=>e.date)); let d=new Date(today()); let streak=0; while(set.has(d.toISOString().slice(0,10))){ streak++; d.setDate(d.getDate()-1);} state.streak=streak; if(streak>state.best) state.best=streak; save(); return streak; }
+
+  // -------- Session engine --------------------------------------------------
+  let curDrills=[]; let idx=0; let editRef=null; let curRating=4;
+  function openSession(title, single=null, editEntry){ modal.classList.add('open'); idx=0; editRef=editEntry||null; curDrills = single? [single] : buildDrillSet(); stageTitle.textContent = single? single.t : `${STAGES[idx]} — ${titleForChapter(state.chapter)}`; stageText.textContent = curDrills[0].s; speak(curDrills[0].s); ratingRow.style.display = curDrills[0].rate? 'flex':'none'; drawDots(curDrills[0].rate?curRating:null); answer.value=''; }
+  function titleForChapter(id){ return CHAPTERS.find(c=>c.id===id)?.name||'Method'; }
+  function buildDrillSet(){ const key=CHAPTERS.find(c=>c.id===state.chapter).key; const base=DRILLS[key].map(d=>({...d})); // progressive overload
+    const factor = 1 + (state.level-1)*0.12; base.forEach(d=> d.time = Math.round(d.time*factor)); // longer focus over time
+    // increase cognitive load in drill by appending an extra constraint with level
+    if(state.level>=3){ base[1].s += ' Then remove one adjective.' }
+    if(state.level>=5){ base[1].s += ' Now state it in 10 words or fewer.' }
+    return base; }
+
+  function drawDots(sel){ ratingDots.innerHTML=''; if(!sel){ return; } for(let i=1;i<=5;i++){ const b=document.createElement('button'); b.className='dot'+(i===sel?' sel':''); b.textContent=i; b.onclick=()=>{ curRating=i; drawDots(i); }; ratingDots.appendChild(b); } }
+
+  nextBtn.onclick=()=>{ const d=curDrills[idx]; if(d.rate){ /* keep */ } if(idx===curDrills.length-1){ // save entry
+      const entry={date:today(), chapter:state.chapter, rating:curRating, note:answer.value.trim()};
+      if(editRef){ editRef.rating=curRating; editRef.note=answer.value.trim(); } else { state.entries.push(entry); grantXP(10 + curRating*2); }
+      save(); modal.classList.remove('open'); render(); return; }
+    idx++; stageTitle.textContent = `${STAGES[idx]} — ${titleForChapter(state.chapter)}`; stageText.textContent = curDrills[idx].s; speak(curDrills[idx].s); ratingRow.style.display = curDrills[idx].rate? 'flex':'none'; drawDots(curDrills[idx].rate?curRating:null); answer.value=''; };
+  closeModal.onclick=()=> modal.classList.remove('open');
+  startBtn.onclick=()=> openSession(titleForChapter(state.chapter));
+
+  // -------- Reminders -------------------------------------------------------
+  remTime.value = state.settings.time||'09:00';
+  setRem.onclick = ()=>{ state.settings.time=remTime.value||'09:00'; save(); ensureReminder(); alert('Reminder set for '+state.settings.time+'. Keep a tab open.'); };
+  function ensureReminder(){ if(window._rem) return; window._rem = setInterval(()=>{ const t=state.settings.time||'09:00'; const [hh,mm]=t.split(':').map(Number); const n=new Date(); if(n.getHours()===hh && n.getMinutes()===mm && n.getSeconds()<5){ if('Notification' in window){ Notification.requestPermission().then(p=>{ if(p==='granted'){ new Notification('Valuefulness','Daily session now.'); }}); } } }, 5000); }
+  ensureReminder();
+
+  // -------- Export / Import / Reset ----------------------------------------
+  $('#exportBtn').onclick=()=>{ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='valuefulness-progress.json'; a.click(); URL.revokeObjectURL(a.href); };
+  $('#importFile').onchange=async (e)=>{ const f=e.target.files[0]; if(!f) return; try{ const obj=JSON.parse(await f.text()); Object.assign(state,obj); save(); render(); }catch{ alert('Invalid file'); } e.target.value=''; };
+  $('#resetBtn').onclick=()=>{ if(!confirm('Delete all progress?')) return; localStorage.removeItem(LS_KEY); location.reload(); };
+
+  // -------- Render ----------------------------------------------------------
+  function render(){ lvlPill.textContent = `Lvl ${state.level} • ${['Novice','Trainee','Adept','Practitioner','Skilled','Advanced','Expert'][Math.min(6,state.level-1)]}`; streakPill.textContent='🔥 Streak '+computeStreak(); bestPill.textContent='🏆 Best '+state.best; const ema=vsiEMA(); vqiPill.textContent='VQI '+(ema? ema.toFixed(2):'—'); renderMap(); renderQuests(); renderHistory(); drawTrend(); }
   render();
-  scheduleReminderTick();
+
+  // -------- Keyboard --------------------------------------------------------
+  document.addEventListener('keydown', e=>{ if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return; if(e.code==='Space'){ e.preventDefault(); startBtn.click(); } if(e.key.toLowerCase()==='h'){ $$('.tab')[1].click(); } if(e.key.toLowerCase()==='q'){ $$('.tab')[0].click(); } });
+
+  // -------- PWA (inline SW + manifest) -------------------------------------
+  (function(){ const manifest={name:'Valuefulness',short_name:'Valuefulness',start_url:'./',display:'standalone',background_color:'#0b1210',theme_color:'#29d66f',icons:[]}; const mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'}); const link=document.createElement('link'); link.rel='manifest'; link.href=URL.createObjectURL(mblob); document.head.appendChild(link); if('serviceWorker' in navigator){ const sw=`const C='pov2'; self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./']))); self.skipWaiting();}); self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==C).map(k=>caches.delete(k))))); self.clients.claim();}); self.addEventListener('fetch',e=>{const u=new URL(e.request.url); if(u.origin===location.origin){ e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request).then(res=>{ const cp=res.clone(); caches.open(C).then(c=>c.put(e.request,cp)); return res; }).catch(()=>caches.match('./')))); }});`; const blob=new Blob([sw],{type:'text/javascript'}); const url=URL.createObjectURL(blob); navigator.serviceWorker.register(url).catch(()=>{}); }})();
   </script>
 </body>
 </html>
