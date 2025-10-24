@@ -1,13 +1,715 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VALUE — Progressive Equanimity Trainer</title>
+  <meta name="description" content="A single‑file, Headspace‑style app that progressively trains value awareness, sufficiency, and equanimity with guided audio, journaling, and streaks." />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#fff8f1; /* warm sand */
+      --bg2:#fff6ef;
+      --brand:#fe7a59; /* headspace-like coral */
+      --brand-2:#ffb36b; /* peach */
+      --ink:#111827;
+      --muted:#6b7280;
+      --success:#10b981;
+    }
+    html,body{height:100%;}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;background:radial-gradient(1200px 900px at 85% -10%,var(--bg2),transparent),radial-gradient(1200px 900px at -10% 120%,#fff,transparent),linear-gradient(180deg,var(--bg1),#ffffff 60%);}    
+    .glass{backdrop-filter:saturate(1.2) blur(8px);}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;border-radius:9999px;padding:.875rem 1.25rem;font-weight:700}
+    .btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#111;}
+    .btn-primary:hover{filter:brightness(1.02)}
+    .btn-ghost{background:rgba(17,24,39,.04)}
+    .card{background:#fff;border-radius:1.25rem;box-shadow:0 20px 35px rgba(2,8,23,.06);}
+
+    /* Breathing bubble */
+    .bubble{width:180px;height:180px;border-radius:9999px;background:conic-gradient(from 90deg at 50% 50%,var(--brand),var(--brand-2));box-shadow:0 25px 50px rgba(254,122,89,.25);animation:pulse 6s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{transform:scale(0.92)}50%{transform:scale(1)}}
+
+    /* Progress ring */
+    .meter{transform:rotate(-90deg);} 
+    .ring-bg{stroke:#f3f4f6}
+    .ring{stroke:url(#grad)}
+
+    /* Hide scrollbar for nicer cards */
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+
+    /* Dialog */
+    dialog::backdrop{background:rgba(0,0,0,.25)}
+  </style>
 </head>
-<body>
-  <h1>Hello, world!</h1>
+<body class="text-[15px] text-slate-800">
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto px-5 pt-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[var(--brand)] to-[var(--brand-2)] shadow-lg"></div>
+        <div class="font-extrabold tracking-tight text-xl">VALUE</div>
+        <span class="text-sm text-slate-500 hidden sm:inline">Equanimity Trainer</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="exportBtn" class="btn btn-ghost"><i class="fa-solid fa-file-export"></i><span class="hidden sm:inline">Export</span></button>
+        <button id="settingsBtn" class="btn btn-ghost"><i class="fa-solid fa-gear"></i><span class="hidden sm:inline">Settings</span></button>
+        <button id="resetBtn" class="btn btn-ghost text-rose-600"><i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-5 pb-2 pt-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+      <div class="order-2 md:order-1">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-slate-900">Train meaning like a muscle.</h1>
+        <p class="mt-3 text-slate-600">Progressive daily sessions build value-awareness, sufficiency, and equanimity. Audio-guided. Data-backed. Streak friendly.</p>
+        <div class="mt-5 flex items-center gap-3">
+          <button id="ctaStart" class="btn btn-primary"><i class="fa-solid fa-play"></i> Start session</button>
+          <button id="viewCurriculum" class="btn btn-ghost"><i class="fa-solid fa-list-check"></i> Curriculum</button>
+        </div>
+        <div class="mt-4 flex items-center gap-4 text-sm text-slate-500">
+          <div class="flex items-center gap-2"><i class="fa-solid fa-fire text-amber-500"></i> Streak: <span id="streak" class="font-bold ml-1">0</span></div>
+          <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Sessions: <span id="totalSessions" class="font-bold ml-1">0</span></div>
+          <div class="flex items-center gap-2"><i class="fa-solid fa-bullseye text-indigo-500"></i> Current: <span id="currentModuleLabel" class="font-semibold ml-1">—</span></div>
+        </div>
+      </div>
+      <div class="order-1 md:order-2 flex items-center justify-center">
+        <div class="relative">
+          <div class="bubble"></div>
+          <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-center">
+            <div class="rounded-full px-4 py-2 bg-white/80 glass shadow-md text-sm">Tap <span class="font-semibold">Start</span> to begin a short breathing warm‑up.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-5 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Player / Today -->
+      <section class="lg:col-span-2 card p-5 md:p-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-extrabold">Today’s Session</h2>
+          <span id="todayDate" class="text-sm text-slate-500"></span>
+        </div>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-2 order-2 md:order-1">
+            <div class="rounded-xl bg-slate-50 p-4">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <div id="todayModule" class="text-sm uppercase tracking-wide text-slate-500"></div>
+                  <div id="todayTitle" class="text-2xl font-extrabold mt-1">—</div>
+                </div>
+                <div class="relative">
+                  <svg width="84" height="84" class="meter">
+                    <defs>
+                      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="var(--brand)"/>
+                        <stop offset="100%" stop-color="var(--brand-2)"/>
+                      </linearGradient>
+                    </defs>
+                    <circle class="ring-bg" cx="42" cy="42" r="34" fill="none" stroke-width="10"/>
+                    <circle id="ring" class="ring" cx="42" cy="42" r="34" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+                  </svg>
+                  <div class="absolute inset-0 grid place-items-center text-xs font-semibold text-slate-600"><span id="timeLeft">00:00</span></div>
+                </div>
+              </div>
+
+              <div class="mt-4 flex items-center gap-2 text-sm text-slate-500">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-clock"></i> <span id="plannedDuration">—</span></span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-volume-high"></i> Voice: <span id="voiceName">auto</span></span>
+                <label class="ml-auto inline-flex items-center gap-2 cursor-pointer select-none"><input type="checkbox" id="speedMode" class="accent-indigo-600"/><span>Dev speed</span></label>
+              </div>
+
+              <div class="mt-4 grid grid-cols-3 gap-2">
+                <button id="btnBreath" class="btn btn-ghost w-full"><i class="fa-solid fa-wind"></i> Breathe</button>
+                <button id="btnGuide" class="btn btn-primary w-full"><i class="fa-solid fa-play"></i> Play guide</button>
+                <button id="btnComplete" class="btn btn-ghost w-full"><i class="fa-solid fa-flag-checkered"></i> Complete</button>
+              </div>
+
+              <div class="mt-4 text-slate-700 leading-relaxed" id="scriptPreview"></div>
+            </div>
+
+            <!-- Journal -->
+            <div class="mt-5 p-4 rounded-xl bg-white border border-slate-100">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold">Journal</h3>
+                <button id="saveJournal" class="btn btn-primary text-sm"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              </div>
+              <p class="text-sm text-slate-500 mt-1">Rate and reflect using Mazzone’s fourfold: Cognition, Affect, Will, Value.</p>
+              <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="p-3 rounded-lg bg-slate-50">
+                  <label class="text-xs text-slate-500">Cognition</label>
+                  <input id="rateCog" type="range" min="1" max="5" value="3" class="w-full">
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50">
+                  <label class="text-xs text-slate-500">Affect</label>
+                  <input id="rateAff" type="range" min="1" max="5" value="3" class="w-full">
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50">
+                  <label class="text-xs text-slate-500">Will</label>
+                  <input id="rateWill" type="range" min="1" max="5" value="3" class="w-full">
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50">
+                  <label class="text-xs text-slate-500">Value</label>
+                  <input id="rateVal" type="range" min="1" max="5" value="3" class="w-full">
+                </div>
+              </div>
+              <textarea id="journalText" class="mt-3 w-full rounded-lg border-slate-200 focus:ring-0 focus:border-slate-300" rows="5" placeholder="One concrete insight from today’s session…"></textarea>
+            </div>
+          </div>
+
+          <!-- Curriculum rail -->
+          <aside class="order-1 md:order-2 space-y-3 max-h-[680px] overflow-y-auto no-scrollbar">
+            <h3 class="text-sm uppercase tracking-wide text-slate-500">Curriculum</h3>
+            <div id="curriculum" class="space-y-2"></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Insights / History -->
+      <section class="card p-5 md:p-6">
+        <h2 class="text-xl font-extrabold">Insights</h2>
+        <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
+          <div class="p-4 rounded-xl bg-slate-50">
+            <div class="text-slate-500">Current module</div>
+            <div id="insModule" class="font-extrabold text-lg">—</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50">
+            <div class="text-slate-500">Next unlock</div>
+            <div id="insNext" class="font-semibold">—</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50">
+            <div class="text-slate-500">Total minutes</div>
+            <div id="insMinutes" class="font-extrabold text-lg">0</div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50">
+            <div class="text-slate-500">Completion rate</div>
+            <div id="insRate" class="font-extrabold text-lg">0%</div>
+          </div>
+        </div>
+        <h3 class="mt-5 text-sm uppercase tracking-wide text-slate-500">Recent journals</h3>
+        <div id="history" class="mt-2 space-y-2 max-h-[420px] overflow-y-auto no-scrollbar"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Settings dialog -->
+  <dialog id="settingsDialog" class="card p-0 w-[92vw] max-w-2xl">
+    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="text-lg font-extrabold">Settings</h3>
+      <button class="btn btn-ghost" onclick="settingsDialog.close()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="p-4 rounded-xl bg-slate-50">
+        <div class="font-semibold">Voice</div>
+        <p class="text-sm text-slate-500">Choose a speech synthesis voice for guides.</p>
+        <select id="voiceSelect" class="mt-2 w-full rounded-lg border-slate-300"></select>
+        <label class="mt-3 block text-sm">Rate <input id="voiceRate" type="range" min="0.6" max="1.3" step="0.05" value="1" class="w-full"></label>
+        <label class="mt-2 block text-sm">Pitch <input id="voicePitch" type="range" min="0.8" max="1.2" step="0.05" value="1" class="w-full"></label>
+        <label class="mt-2 block text-sm">Volume <input id="voiceVol" type="range" min="0.1" max="1" step="0.05" value="1" class="w-full"></label>
+      </div>
+      <div class="p-4 rounded-xl bg-slate-50">
+        <div class="font-semibold">Session lengths</div>
+        <p class="text-sm text-slate-500">Base minutes for the first week. Increases weekly.</p>
+        <input id="baseMinutes" type="number" min="3" max="20" value="5" class="mt-2 w-24 rounded-lg border-slate-300">
+        <p class="mt-3 text-sm text-slate-500">Progressive overload: +1 min per week in the same module.</p>
+        <div class="mt-4">
+          <label class="inline-flex items-center gap-2"><input type="checkbox" id="ambientTick" class="accent-indigo-600"/> Subtle tick every minute</label>
+        </div>
+      </div>
+      <div class="md:col-span-2 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+        <div class="font-semibold">Privacy</div>
+        <p class="text-sm text-emerald-700">All data stays in your browser (localStorage). Export/Import for backup.</p>
+        <div class="mt-3 flex items-center gap-2">
+          <button id="importBtn" class="btn btn-ghost"><i class="fa-solid fa-file-import"></i> Import</button>
+          <input type="file" id="importFile" accept="application/json" class="hidden"/>
+        </div>
+      </div>
+    </div>
+    <div class="p-4 border-t border-slate-100 flex justify-end">
+      <button class="btn btn-primary" onclick="settingsDialog.close()">Done</button>
+    </div>
+  </dialog>
+
+  <!-- Curriculum dialog -->
+  <dialog id="curriculumDialog" class="card p-0 w-[92vw] max-w-3xl">
+    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="text-lg font-extrabold">Curriculum</h3>
+      <button class="btn btn-ghost" onclick="curriculumDialog.close()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="curriculumBody" class="p-5"></div>
+    <div class="p-4 border-t border-slate-100 flex justify-end">
+      <button class="btn btn-primary" onclick="curriculumDialog.close()">Close</button>
+    </div>
+  </dialog>
+
+  <script>
+    // ---------- Utilities ----------
+    const $ = (sel, root=document)=>root.querySelector(sel);
+    const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+
+    const fmtDate = (d = new Date()) => d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+    const dayKey = (d = new Date()) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0,10);
+
+    const storage = {
+      k:'value_trainer_v1',
+      read(){try{return JSON.parse(localStorage.getItem(this.k))||{};}catch{return {}}},
+      write(v){localStorage.setItem(this.k,JSON.stringify(v));}
+    }
+
+    // ---------- Curriculum Data ----------
+    const MODULES = [
+      {
+        id:'value-awareness',
+        color:'from-orange-500 to-amber-400',
+        title:'Value Awareness',
+        blurb:'Notice what actually matters. Label external vs internal value daily.',
+        weeks:2,
+        sessions:14,
+        script:(ctx)=>[
+          `Welcome. Today we train value awareness.`,
+          `Recall your last 24 hours. Pick three moments that felt important.`,
+          `For each, label it: external value—status, approval, acquisition. Or internal value—clarity, autonomy, love, equanimity.`,
+          `Say it in your mind: external or internal. Notice the body’s response.`,
+          `Pick one small action today that moves one notch toward internal value. Decide it now.`
+        ]
+      },
+      {
+        id:'error-theory',
+        color:'from-rose-500 to-pink-400',
+        title:'Error-Theory Training',
+        blurb:'Catch misperceived value. Build metacognitive distance.',
+        weeks:2,
+        sessions:14,
+        script:(ctx)=>[
+          `We are looking for value errors—moments we confuse means for ends.`,
+          `Scan today. Where did you assume owning or winning equals worth?` ,
+          `Name the error: projection or status substitution.` ,
+          `Visualize releasing that assumption. Ask: what is the sufficient value here, without the prop?` ,
+          `Choose a tiny practice to test this today.`
+        ]
+      },
+      {
+        id:'sufficiency',
+        color:'from-amber-500 to-yellow-400',
+        title:'Sufficiency Calibration',
+        blurb:'Condition the felt sense of “enough now”.',
+        weeks:2,
+        sessions:14,
+        script:(ctx)=>[
+          `We contrast two states. Deficiency: I need. Sufficiency: enough now.` ,
+          `Breathe in, recall a recent grasping. Exhale, say: enough now.` ,
+          `Locate sufficiency in the body. Warmth, space, ease.` ,
+          `Enlarge it one percent. Hold for two breaths.` ,
+          `Pick a daily cue—opening a door, making tea—to trigger: enough now.`
+        ]
+      },
+      {
+        id:'will-to-value',
+        color:'from-indigo-500 to-blue-400',
+        title:'Will‑to‑Value Strengthening',
+        blurb:'Make one micro‑decision per day that increases value sufficiency. Then two.',
+        weeks:2,
+        sessions:14,
+        script:(ctx)=>[
+          `Choose one micro‑decision you will face today—food, reply, scroll.` ,
+          `Ask: does this increase value sufficiency?` ,
+          `Pre‑commit now. Visualize the friction and your answer.` ,
+          `End with one sentence intention.`
+        ]
+      },
+      {
+        id:'loss-equanimity',
+        color:'from-emerald-500 to-teal-400',
+        title:'Loss Equanimity',
+        blurb:'Rehearse loss. Find the value that remains.',
+        weeks:2,
+        sessions:14,
+        script:(ctx)=>[
+          `Bring to mind a small loss. A plan changed. An item gone.` ,
+          `Feel the contraction. Name it.` ,
+          `Ask: what value persists despite this?` ,
+          `Anchor to that value for two breaths.` ,
+          `Carry one sentence: Even without X, I keep Y.`
+        ]
+      },
+      {
+        id:'integration',
+        color:'from-slate-700 to-slate-500',
+        title:'Integration',
+        blurb:'Daily fourfold check: Cognition, Affect, Will, Value. Tighten the loop.',
+        weeks:99,
+        sessions:9999,
+        script:(ctx)=>[
+          `Review the day across four dimensions: Cognition, Affect, Will, Value.` ,
+          `Which one most constrained value sufficiency?` ,
+          `Choose one lever for tomorrow.`
+        ]
+      }
+    ];
+
+    // ---------- State ----------
+    const state = {
+      get data(){
+        const d = storage.read();
+        return Object.assign({
+          streak:0,
+          lastDay:null,
+          sessions:0,
+          minutes:0,
+          moduleIndex:0,
+          perModuleDone:{},
+          journal:[],
+          settings:{
+            voice:null, rate:1, pitch:1, vol:1,
+            baseMinutes:5,
+            ambientTick:false
+          }
+        }, d);
+      },
+      set data(v){ storage.write(v); }
+    };
+
+    // ---------- Rendering ----------
+    const el = {
+      streak: $('#streak'),
+      total: $('#totalSessions'),
+      curr: $('#currentModuleLabel'),
+      todayDate: $('#todayDate'),
+      todayModule: $('#todayModule'),
+      todayTitle: $('#todayTitle'),
+      planned: $('#plannedDuration'),
+      ring: $('#ring'),
+      timeLeft: $('#timeLeft'),
+      scriptPreview: $('#scriptPreview'),
+      curriculum: $('#curriculum'),
+      insModule: $('#insModule'),
+      insNext: $('#insNext'),
+      insMinutes: $('#insMinutes'),
+      insRate: $('#insRate'),
+      history: $('#history'),
+      speedMode: $('#speedMode'),
+    };
+
+    function currentModule(d){ return MODULES[d.moduleIndex] }
+
+    function plannedMinutes(d){
+      const mod = currentModule(d);
+      const done = (d.perModuleDone[mod.id]||0);
+      const week = Math.floor(done/7); // increments weekly
+      return Math.min(60, (d.settings?.baseMinutes||5) + week);
+    }
+
+    function renderDashboard(){
+      const d = state.data;
+      const mod = currentModule(d);
+      el.streak.textContent = d.streak||0;
+      el.total.textContent = d.sessions||0;
+      el.curr.textContent = mod.title;
+      el.todayDate.textContent = fmtDate();
+      el.todayModule.textContent = mod.title;
+      el.todayTitle.textContent = sessionTitle(d, mod);
+      const mins = plannedMinutes(d);
+      el.planned.textContent = `${mins} min`;
+      $('#insModule').textContent = mod.title;
+      $('#insMinutes').textContent = d.minutes||0;
+      $('#insRate').textContent = d.sessions ? Math.round((d.journal.length/d.sessions)*100)+'%' : '0%';
+      const next = MODULES[d.moduleIndex+1];
+      $('#insNext').textContent = next ? `Unlocks when ${mod.title} reaches ${(mod.sessions)} sessions` : '—';
+
+      // Preview script
+      el.scriptPreview.innerHTML = currentModule(d).script({}).map(s=>`<p class="mt-2">${s}</p>`).join('');
+
+      renderCurriculum();
+      renderHistory();
+      updateRing(0);
+      updateTimeLeft(mins*60);
+    }
+
+    function sessionTitle(d, mod){
+      const n = (d.perModuleDone[mod.id]||0)+1;
+      return `${mod.title} · Day ${n}`
+    }
+
+    function renderCurriculum(){
+      const d = state.data;
+      el.curriculum.innerHTML = '';
+      MODULES.forEach((m,idx)=>{
+        const done = d.perModuleDone[m.id]||0;
+        const locked = idx>d.moduleIndex;
+        const pct = Math.min(100, Math.round((done/(m.sessions||14))*100));
+        const item = document.createElement('div');
+        item.className = `p-4 rounded-xl border ${locked? 'border-slate-200 bg-white/60': 'border-white bg-slate-50'}`;
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${m.color}"></div>
+            <div class="flex-1">
+              <div class="font-extrabold">${m.title}</div>
+              <div class="text-sm text-slate-500">${m.blurb}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm ${locked? 'text-slate-400':'text-slate-600'}">${done}/${m.sessions===9999?'∞':m.sessions}</div>
+              <div class="w-28 h-2 bg-slate-200 rounded-full mt-2"><div style="width:${pct}%" class="h-2 rounded-full bg-gradient-to-r ${m.color}"></div></div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <button ${locked?'disabled':''} data-idx="${idx}" class="chooseModule btn btn-ghost text-sm ${locked?'opacity-50 cursor-not-allowed':''}"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${locked?'Locked': 'Switch here'}</button>
+          </div>`;
+        el.curriculum.appendChild(item);
+      });
+      $$('.chooseModule').forEach(b=>b.addEventListener('click',()=>{
+        const idx = +b.dataset.idx;
+        const d = state.data; d.moduleIndex = idx; state.data = d; renderDashboard();
+      }));
+    }
+
+    function renderHistory(){
+      const d = state.data;
+      el.history.innerHTML = '';
+      [...(d.journal||[])].reverse().slice(0,20).forEach(j=>{
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-lg border border-slate-100 bg-white';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">${j.title}</div>
+            <div class="text-xs text-slate-500">${fmtDate(new Date(j.date))}</div>
+          </div>
+          <div class="mt-1 text-xs text-slate-500">C${j.cog} · A${j.aff} · W${j.will} · V${j.val}</div>
+          <p class="mt-2 text-sm">${j.note? j.note.replace(/</g,'&lt;') : ''}</p>
+        `;
+        el.history.appendChild(card);
+      })
+    }
+
+    // ---------- Timer & Ring ----------
+    let sessionSecs = 0, remaining = 0, ticker=null, minuteTicker=null, playing=false;
+
+    function updateRing(progress){
+      const CIRC = 2*Math.PI*34; // 213.6
+      const off = CIRC*(1-progress);
+      el.ring.setAttribute('stroke-dashoffset', off);
+    }
+
+    function updateTimeLeft(sec){
+      const m = Math.floor(sec/60), s = Math.floor(sec%60);
+      el.timeLeft.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function startTimer(totalSec){
+      clearInterval(ticker); clearInterval(minuteTicker);
+      sessionSecs = totalSec; remaining = totalSec; playing=true;
+      const start = Date.now();
+      ticker = setInterval(()=>{
+        const elapsed = (Date.now()-start)/1000;
+        remaining = Math.max(0, totalSec - elapsed);
+        updateTimeLeft(remaining);
+        updateRing( (elapsed/totalSec) );
+        if(remaining<=0){ stopTimer(); chime(); }
+      }, 200);
+      const d = state.data; if(d.settings.ambientTick){ minuteTicker = setInterval(()=>tick(), 60000) }
+    }
+
+    function stopTimer(){ clearInterval(ticker); clearInterval(minuteTicker); playing=false; }
+
+    function chime(){
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='sine'; o.frequency.value=880; g.gain.value=0.0001; o.connect(g); g.connect(ctx.destination);
+      o.start(); g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.8);
+      setTimeout(()=>{o.stop(); ctx.close()},900);
+    }
+    function tick(){
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='square'; o.frequency.value=880; g.gain.value=0.0001; o.connect(g); g.connect(ctx.destination);
+      o.start(); g.gain.exponentialRampToValueAtTime(0.1, ctx.currentTime+0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.15);
+      setTimeout(()=>{o.stop(); ctx.close()},180);
+    }
+
+    // ---------- Speech ----------
+    let voices=[];
+    function loadVoices(){ voices = speechSynthesis.getVoices(); fillVoiceSelect(); }
+    function fillVoiceSelect(){
+      const sel = $('#voiceSelect'); sel.innerHTML='';
+      const d = state.data;
+      voices.forEach((v,i)=>{
+        const opt = document.createElement('option');
+        opt.value=i; opt.textContent=`${v.name} (${v.lang})${v.default?' • default':''}`;
+        if(d.settings.voice && d.settings.voice.name===v.name) opt.selected=true;
+        sel.appendChild(opt);
+      });
+      $('#voiceName').textContent = d.settings.voice? d.settings.voice.name : 'auto';
+    }
+
+    function speak(lines){
+      if(!('speechSynthesis' in window)) { alert('Speech synthesis not supported. Read the script text instead.'); return; }
+      speechSynthesis.cancel();
+      const d = state.data; const seq = [];
+      lines.forEach((t,i)=>{
+        const u = new SpeechSynthesisUtterance(t);
+        const v = d.settings.voice && voices.find(x=>x.name===d.settings.voice.name);
+        if(v) u.voice=v; u.rate=d.settings.rate||1; u.pitch=d.settings.pitch||1; u.volume=d.settings.vol||1;
+        seq.push(u);
+      });
+      seq.forEach(u=>speechSynthesis.speak(u));
+    }
+
+    // ---------- Actions ----------
+    function doBreath(){
+      const devFast = el.speedMode.checked;
+      const inhale = devFast? 2:4, hold=devFast?1:2, exhale=devFast?3:6;
+      const rounds = devFast? 3: 8;
+      const lines = [
+        `We will breathe ${rounds} rounds. Inhale ${inhale}, hold ${hold}, exhale ${exhale}.` ,
+      ];
+      speak(lines);
+      const total = (inhale+hold+exhale)*rounds;
+      startTimer(total);
+    }
+
+    function doGuide(){
+      const d = state.data; const mod = currentModule(d);
+      const dev = el.speedMode.checked;
+      const mins = plannedMinutes(d);
+      const secs = dev? Math.max(45, mins*60/10): mins*60; // dev speed ≈ 10x
+      startTimer(secs);
+      speak(mod.script({}));
+    }
+
+    function completeSession(){
+      const d = state.data; const today = dayKey();
+      if(d.lastDay){
+        const last = new Date(d.lastDay); const diff = (new Date(today)-new Date(d.lastDay))/86400000;
+        d.streak = diff===1 ? (d.streak||0)+1 : diff===0 ? d.streak : 1;
+      } else { d.streak = 1; }
+      d.lastDay = today;
+      d.sessions = (d.sessions||0)+1;
+      const mins = plannedMinutes(d); d.minutes = (d.minutes||0)+mins;
+      const mod = currentModule(d);
+      d.perModuleDone[mod.id] = (d.perModuleDone[mod.id]||0)+1;
+      // Unlock next module when threshold reached
+      if(d.perModuleDone[mod.id] >= (mod.sessions||14)) d.moduleIndex = Math.min(d.moduleIndex+1, MODULES.length-1);
+      state.data = d; chime(); renderDashboard();
+    }
+
+    function saveJournal(){
+      const d = state.data; const mod = currentModule(d);
+      const entry = {
+        date: new Date().toISOString(),
+        title: sessionTitle(d, mod),
+        mod: mod.id,
+        cog: +$('#rateCog').value,
+        aff: +$('#rateAff').value,
+        will:+$('#rateWill').value,
+        val: +$('#rateVal').value,
+        note: $('#journalText').value.trim()
+      };
+      d.journal = d.journal||[]; d.journal.push(entry); state.data = d; renderHistory();
+      $('#journalText').value=''; chime();
+    }
+
+    // ---------- Export / Import / Reset ----------
+    function exportData(){
+      const blob = new Blob([JSON.stringify(state.data,null,2)],{type:'application/json'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a');
+      a.href=url; a.download='value-trainer-backup.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    function importData(f){
+      const reader = new FileReader(); reader.onload = e=>{ try{ state.data = JSON.parse(e.target.result); renderDashboard(); }catch{ alert('Invalid file') } }; reader.readAsText(f);
+    }
+
+    function resetAll(){ if(confirm('Reset all local data?')){ localStorage.removeItem(storage.k); renderDashboard(); }}
+
+    // ---------- Curriculum modal content ----------
+    function buildCurriculumModal(){
+      const root = $('#curriculumBody'); root.innerHTML='';
+      MODULES.forEach((m,i)=>{
+        const card = document.createElement('div');
+        card.className='p-4 rounded-xl border border-slate-100 bg-white mb-3';
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${m.color}"></div>
+            <div>
+              <div class="font-extrabold">${i+1}. ${m.title}</div>
+              <div class="text-sm text-slate-500">${m.blurb}</div>
+            </div>
+          </div>
+          <ol class="mt-3 list-decimal pl-6 text-sm text-slate-700">
+            ${m.script({}).map(s=>`<li class="mt-1">${s}</li>`).join('')}
+          </ol>
+        `;
+        root.appendChild(card);
+      })
+    }
+
+    // ---------- Settings sync ----------
+    function syncSettingsToUI(){
+      const d = state.data;
+      $('#voiceRate').value = d.settings.rate||1;
+      $('#voicePitch').value = d.settings.pitch||1;
+      $('#voiceVol').value  = d.settings.vol||1;
+      $('#baseMinutes').value = d.settings.baseMinutes||5;
+      $('#ambientTick').checked = !!d.settings.ambientTick;
+      $('#voiceName').textContent = d.settings.voice? d.settings.voice.name : 'auto';
+    }
+
+    function saveSettingsFromUI(){
+      const d = state.data;
+      d.settings.rate = +$('#voiceRate').value;
+      d.settings.pitch= +$('#voicePitch').value;
+      d.settings.vol  = +$('#voiceVol').value;
+      d.settings.baseMinutes = Math.max(3, Math.min(20, +$('#baseMinutes').value||5));
+      d.settings.ambientTick = !!$('#ambientTick').checked;
+      const sel = $('#voiceSelect');
+      if(sel.value){ const v = voices[+sel.value]; if(v) d.settings.voice={name:v.name, lang:v.lang}; }
+      state.data = d; syncSettingsToUI(); renderDashboard();
+    }
+
+    // ---------- Event wiring ----------
+    function wire(){
+      $('#ctaStart').addEventListener('click', doGuide);
+      $('#btnGuide').addEventListener('click', doGuide);
+      $('#btnBreath').addEventListener('click', doBreath);
+      $('#btnComplete').addEventListener('click', completeSession);
+      $('#saveJournal').addEventListener('click', saveJournal);
+      $('#settingsBtn').addEventListener('click', ()=>{ settingsDialog.showModal(); syncSettingsToUI(); });
+      $('#viewCurriculum').addEventListener('click', ()=>{ buildCurriculumModal(); curriculumDialog.showModal(); });
+      $('#exportBtn').addEventListener('click', exportData);
+      $('#importBtn').addEventListener('click', ()=>$('#importFile').click());
+      $('#importFile').addEventListener('change', e=>{ if(e.target.files[0]) importData(e.target.files[0]); });
+      $('#resetBtn').addEventListener('click', resetAll);
+      $('#voiceSelect').addEventListener('change', saveSettingsFromUI);
+      $('#voiceRate').addEventListener('input', saveSettingsFromUI);
+      $('#voicePitch').addEventListener('input', saveSettingsFromUI);
+      $('#voiceVol').addEventListener('input', saveSettingsFromUI);
+      $('#baseMinutes').addEventListener('change', saveSettingsFromUI);
+      $('#ambientTick').addEventListener('change', saveSettingsFromUI);
+    }
+
+    // ---------- Init ----------
+    function init(){
+      try{ renderDashboard(); wire(); }catch(e){ console.error(e); alert('Init error: '+e.message); }
+      if('speechSynthesis' in window){
+        speechSynthesis.onvoiceschanged = ()=>{ loadVoices(); };
+        // Some engines need an initial call
+        setTimeout(loadVoices, 150);
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
