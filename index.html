@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Pursuit of Value — 7×7 Program</title>
-<meta name="description" content="Seven chapters. Seven days each. Quote → cumulative exercise with progressive overload."/>
+<meta name="description" content="Seven chapters. Seven days each. Quote → cumulative exercise with overload. Includes daily equanimity check-in and trend graph."/>
 <style>
   :root{
     --bg:#0b1210; --ink:#eaf7f1; --muted:#a8c3b9; --card:#0f1814; --line:rgba(255,255,255,.08);
@@ -40,6 +40,12 @@
   blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:#0a1411;border-radius:8px}
   textarea{width:100%;background:#0a1411;border:1px solid var(--line);color:var(--ink);padding:12px 14px;border-radius:12px;font-size:15px}
   ul{margin:8px 0 0 18px}
+  /* rating dots */
+  .rating{display:flex;gap:8px;align-items:center}
+  .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#0a1411;border:1px solid var(--line);cursor:pointer;color:var(--muted);font-size:12px}
+  .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
+  /* chart */
+  #eqChart{width:100%;height:200px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
 </style>
 </head>
 <body>
@@ -70,6 +76,7 @@
           <div class="row">
             <div class="pill" id="stepPill">Day 1/7</div>
             <div class="pill" id="chapPill">Chapter 1/7</div>
+            <div class="pill" id="eqPill">EQ —</div>
           </div>
         </div>
         <div class="big" style="margin-top:8px">
@@ -79,6 +86,11 @@
         <div class="card" style="padding:10px">
           <div class="muted">Map</div>
           <div id="map"></div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="card" style="padding:10px">
+          <div class="muted">Equanimity trend</div>
+          <canvas id="eqChart" width="900" height="200" aria-label="Equanimity trend"></canvas>
         </div>
       </section>
 
@@ -109,6 +121,11 @@
         <div style="font-weight:700" id="exerciseTitle">Exercise</div>
         <div class="muted" id="exerciseBase">—</div>
         <div class="muted" id="overload" style="margin-top:6px;color:#c7e9d6">—</div>
+        <div style="height:8px"></div>
+        <div class="row" id="eqRow">
+          <span class="muted" style="min-width:140px">Equanimity today</span>
+          <div class="rating" id="eqDots"></div>
+        </div>
         <div style="height:8px"></div>
         <textarea id="answer" rows="5" placeholder="Write here…"></textarea>
         <div class="row" style="justify-content:flex-end;margin-top:8px">
@@ -279,7 +296,7 @@ const PROGRAM = [
 ];
 
 /* =================== State =================== */
-const LS_KEY = "pov_7x7_v2"; // reset key for new logic
+const LS_KEY = "pov_7x7_v2"; // keep key, entries gain optional eq
 function load(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {
     chapter:0, day:0,
@@ -291,12 +308,14 @@ function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
 
 /* =================== UI refs =================== */
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-const lessonTitle=$('#lessonTitle'), chapterTheme=$('#chapterTheme'), stepPill=$('#stepPill'), chapPill=$('#chapPill');
+const lessonTitle=$('#lessonTitle'), chapterTheme=$('#chapterTheme'), stepPill=$('#stepPill'), chapPill=$('#chapPill'), eqPill=$('#eqPill');
 const start=$('#start'), map=$('#map'), historyEl=$('#history');
 const modal=$('#modal'), closeBtn=$('#close'), nextBtn=$('#next');
 const quoteWrap=$('#quoteWrap'), quoteEl=$('#quote');
 const exerciseWrap=$('#exerciseWrap'), exTitle=$('#exerciseTitle'), exBase=$('#exerciseBase'), exOver=$('#overload'), answer=$('#answer');
+const eqDots=$('#eqDots'); let curEq=3;
 const exportBtn=$('#exportBtn'), importFile=$('#importFile'), resetBtn=$('#resetBtn');
+const eqChart=$('#eqChart');
 
 /* =================== Render =================== */
 function render(){
@@ -305,8 +324,11 @@ function render(){
   chapterTheme.textContent = ch.theme;
   stepPill.textContent = `Day ${day}/7`;
   chapPill.textContent = `Chapter ${S.chapter+1}/7`;
+  const ema = eqEMA();
+  eqPill.textContent = `EQ ${ema? ema.toFixed(2):'—'}`;
   renderMap();
   renderHistory();
+  drawEqChart();
 }
 function renderMap(){
   map.innerHTML="";
@@ -323,12 +345,24 @@ function renderHistory(){
   historyEl.innerHTML = arr.map(e=>{
     const label = `${PROGRAM[e.chapter].name} · Day ${e.day+1}`;
     const d = new Date(e.ts);
+    const eqLabel = (typeof e.eq==='number')? ` • EQ ${e.eq}`:'';
     return `<div class="item">
       <div class="muted" style="text-align:center">${d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</div>
-      <div><div style="font-weight:700">${label}</div><div class="muted">${(e.note||'').replace(/[<>&]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))||'(no note)'}</div></div>
+      <div><div style="font-weight:700">${label}${eqLabel}</div><div class="muted">${(e.note||'').replace(/[<>&]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))||'(no note)'}</div></div>
       <div class="muted" style="text-align:right">#${e.chapter+1}.${e.day+1}</div>
     </div>`;
   }).join('');
+}
+
+/* =================== Equanimity UI =================== */
+function drawEqDots(sel=curEq){
+  eqDots.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const b=document.createElement('button');
+    b.className='dot'+(i===sel?' sel':''); b.textContent=i; b.setAttribute('aria-label','Equanimity '+i);
+    b.onclick=()=>{ curEq=i; drawEqDots(i); };
+    eqDots.appendChild(b);
+  }
 }
 
 /* =================== Session flow =================== */
@@ -345,14 +379,13 @@ nextBtn.onclick=()=> {
 closeBtn.onclick=()=> modal.classList.remove('open');
 
 function buildCumulative(chIndex, dayIndex){
-  // returns HTML list of tasks Day1..DayN (exact repetition cumulates)
   const items = PROGRAM[chIndex].overload.slice(0, dayIndex+1)
     .map((t,i)=>`<li>Day ${i+1} — ${t}</li>`).join('');
   return `<div class="muted">Do the following today:</div><ul>${items}</ul>`;
 }
 
 function openSession(){
-  stage=0; answer.value="";
+  stage=0; answer.value=""; curEq=3; drawEqDots();
   const ch=PROGRAM[S.chapter];
   quoteEl.textContent = QUOTES[S.chapter][S.day] || '';
   exTitle.textContent = "Exercise";
@@ -364,9 +397,9 @@ function openSession(){
   modal.classList.add('open');
 }
 
-// test-friendly: allow multiple runs per day
+// Save with equanimity rating
 function complete(){
-  const entry = {ts: Date.now(), chapter:S.chapter, day:S.day, note:answer.value.trim()};
+  const entry = {ts: Date.now(), chapter:S.chapter, day:S.day, note:answer.value.trim(), eq:curEq};
   S.entries.push(entry);
   if(S.day<6){ S.day++; }
   else { S.day=0; if(S.chapter<6) S.chapter++; }
@@ -376,6 +409,36 @@ function complete(){
 }
 
 document.getElementById('save').onclick = complete;
+
+/* =================== Equanimity metrics & chart =================== */
+function eqSeries(limit=90){
+  return S.entries.filter(e=>typeof e.eq==='number').slice(-limit);
+}
+function eqEMA(N=30){
+  const vals = eqSeries().map(e=>e.eq);
+  if(!vals.length) return null;
+  const k=2/(N+1); let ema=vals[0]; for(let i=1;i<vals.length;i++){ ema = vals[i]*k + ema*(1-k); }
+  return ema;
+}
+function drawEqChart(){
+  const cvs=eqChart; if(!cvs) return; const ctx=cvs.getContext('2d'); const w=cvs.width, h=cvs.height;
+  ctx.clearRect(0,0,w,h); ctx.fillStyle='#0a1411'; ctx.fillRect(0,0,w,h);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1; ctx.beginPath();
+  for(let i=1;i<=4;i++){ const y=h - i*(h/5); ctx.moveTo(40,y); ctx.lineTo(w-10,y);} ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='12px ui-sans-serif';
+  for(let i=1;i<=5;i++){ const y=h - i*(h/5); ctx.fillText(String(i), 8, y+4); }
+  const pts=eqSeries(); if(pts.length<2){ ctx.fillText('Log EQ to see trend', w/2-70, h/2); return; }
+  const padL=40, padR=10, padT=10, padB=20; const xmin=0, xmax=pts.length-1;
+  const x=i=> padL + (i-xmin)/(xmax-xmin)*(w-padL-padR);
+  const y=v=> padT + (1-(v-1)/4) * (h-padT-padB);
+  // line
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); ctx.lineWidth=2.2; ctx.beginPath();
+  pts.forEach((e,i)=>{ const X=x(i), Y=y(e.eq); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }); ctx.stroke();
+  // markers
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  pts.forEach((e,i)=>{ const X=x(i), Y=y(e.eq); ctx.beginPath(); ctx.arc(X,Y,2.5,0,Math.PI*2); ctx.fill(); });
+}
 
 /* =================== Export / Import / Reset =================== */
 exportBtn.onclick = ()=>{
