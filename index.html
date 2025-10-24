@@ -1,715 +1,598 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VALUE — Progressive Equanimity Trainer</title>
-  <meta name="description" content="A single‑file, Headspace‑style app that progressively trains value awareness, sufficiency, and equanimity with guided audio, journaling, and streaks." />
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+  <title>Pursuit of Value — Valuefulness</title>
+  <meta name="description" content="Daily valuefulness ritual. Build equanimity and value‑sufficiency in 3 minutes a day."/>
   <style>
     :root{
-      --bg1:#fff8f1; /* warm sand */
-      --bg2:#fff6ef;
-      --brand:#fe7a59; /* headspace-like coral */
-      --brand-2:#ffb36b; /* peach */
-      --ink:#111827;
-      --muted:#6b7280;
-      --success:#10b981;
+      --bg:#0c1210;           /* deep green‑black */
+      --panel:#0f1815;        /* cards */
+      --panel-2:#0b1512;      /* alt */
+      --text:#e7f5ef;         /* near‑white */
+      --muted:#a8c3b9;        /* muted */
+      --accent:#2bd671;       /* primary green */
+      --accent-2:#12a65a;     /* darker green */
+      --warn:#ffb02e;
+      --danger:#ff5d5d;
+      --ok:#67e8a5;
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
+      --radius: 20px;
     }
-    html,body{height:100%;}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,sans-serif;background:radial-gradient(1200px 900px at 85% -10%,var(--bg2),transparent),radial-gradient(1200px 900px at -10% 120%,#fff,transparent),linear-gradient(180deg,var(--bg1),#ffffff 60%);}    
-    .glass{backdrop-filter:saturate(1.2) blur(8px);}
-    .btn{display:inline-flex;align-items:center;gap:.6rem;border-radius:9999px;padding:.875rem 1.25rem;font-weight:700}
-    .btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#111;}
-    .btn-primary:hover{filter:brightness(1.02)}
-    .btn-ghost{background:rgba(17,24,39,.04)}
-    .card{background:#fff;border-radius:1.25rem;box-shadow:0 20px 35px rgba(2,8,23,.06);}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+      color:var(--text); background: radial-gradient(1200px 800px at 80% -10%, #143a2b 0%, #0d1a14 35%, #0c1210 70%), var(--bg);
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:24px;}
+    header{
+      display:flex; align-items:center; gap:12px; justify-content:space-between; margin-bottom:18px;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:40px;height:40px;border-radius:50%;
+      background: conic-gradient(from 270deg, var(--accent), #6bf7b1, var(--accent-2) 60%, #0c7d47 80%, var(--accent));
+      box-shadow: inset 0 0 12px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.35);
+    }
+    h1{font-size:20px;margin:0}
+    .tag{font-size:12px;color:var(--muted)}
 
-    /* Breathing bubble */
-    .bubble{width:180px;height:180px;border-radius:9999px;background:conic-gradient(from 90deg at 50% 50%,var(--brand),var(--brand-2));box-shadow:0 25px 50px rgba(254,122,89,.25);animation:pulse 6s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{transform:scale(0.92)}50%{transform:scale(1)}}
+    .grid{
+      display:grid; grid-template-columns: 1.5fr 1fr; gap:18px;
+    }
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
 
-    /* Progress ring */
-    .meter{transform:rotate(-90deg);} 
-    .ring-bg{stroke:#f3f4f6}
-    .ring{stroke:url(#grad)}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)), var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .card h2{font-size:16px;margin:0 0 8px 0}
+    .help{font-size:13px;color:var(--muted)}
 
-    /* Hide scrollbar for nicer cards */
-    .no-scrollbar::-webkit-scrollbar{display:none}
-    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .big-cta{
+      margin-top:8px; display:grid; place-items:center; padding:22px; border-radius:calc(var(--radius) + 20px);
+      background: linear-gradient(160deg, #0f1f1a, #0b1512);
+      border:1px solid rgba(255,255,255,.05);
+    }
 
-    /* Dialog */
-    dialog::backdrop{background:rgba(0,0,0,.25)}
+    .tap{
+      width:220px;height:220px;border-radius:50%; cursor:pointer; border:none; color:#092114;
+      background: radial-gradient(85% 85% at 50% 20%, #4affb4, var(--accent) 55%, var(--accent-2) 100%);
+      font-weight:700; font-size:18px; letter-spacing:.2px; box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35);
+      transition: transform .08s ease;
+    }
+    .tap:active{ transform: scale(.98) }
+    .tap[disabled]{ filter:grayscale(.4) opacity(.8); cursor:not-allowed }
+
+    .stats{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px}
+    .pill{
+      background:#0b1512; border:1px solid rgba(255,255,255,.06); border-radius:999px; padding:10px 14px; font-size:13px; color:var(--muted)
+    }
+
+    /* Gauge */
+    .gauge-wrap{display:flex; gap:16px; align-items:center}
+    .gauge{position:relative;width:120px;height:120px}
+    canvas#gaugeCanvas{width:120px;height:120px}
+    .gauge .center{position:absolute; inset:0; display:grid; place-items:center; font-size:22px; font-weight:700}
+
+    /* Modal */
+    .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55); padding:20px;}
+    .modal.open{display:grid}
+    .sheet{width:min(620px, 96vw); background:var(--panel); border-radius:20px; border:1px solid rgba(255,255,255,.06); box-shadow: var(--shadow); padding:18px}
+    .row{display:flex; gap:12px; align-items:center}
+    textarea, input[type="text"]{width:100%; background:#0a1411; border:1px solid rgba(255,255,255,.08); color:var(--text); padding:12px 14px; border-radius:12px; font-size:15px}
+    .actions{display:flex; gap:10px; justify-content:flex-end; margin-top:12px}
+    .btn{background:#0e1714;color:var(--text); border:1px solid rgba(255,255,255,.08); padding:10px 14px; border-radius:12px; cursor:pointer}
+    .btn.primary{background:linear-gradient(160deg, var(--accent), var(--accent-2)); border:none; color:#07381f; font-weight:700}
+    .btn.ghost{background:transparent}
+    .btn.danger{background:linear-gradient(160deg, #ff8a8a, #ff5d5d); color:#2a0000; border:none}
+    .btn[disabled]{opacity:.5; cursor:not-allowed}
+
+    /* Rating */
+    .rating{display:flex; gap:10px; align-items:center}
+    .dot{width:28px;height:28px;border-radius:50%; display:inline-grid; place-items:center; cursor:pointer;
+      background:#0a1411; border:1px solid rgba(255,255,255,.08); font-size:12px; color:var(--muted)}
+    .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
+
+    /* History */
+    .list{display:flex; flex-direction:column; gap:10px; max-height:460px; overflow:auto; padding-right:4px}
+    .item{display:grid; grid-template-columns:110px 1fr auto; gap:10px; align-items:center; padding:12px; background:var(--panel-2); border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+    .item .date{font-size:12px;color:var(--muted)}
+    .item .note{font-size:14px}
+
+    .toolbar{display:flex; gap:10px; flex-wrap:wrap}
+    .hint{color:var(--muted); font-size:12px}
+
+    /* Chart */
+    #chart{width:100%;height:220px; background:#0b1512; border-radius:14px; border:1px solid rgba(255,255,255,.06)}
+
+    /* Tabs */
+    .tabs{display:flex; gap:8px; margin-bottom:8px}
+    .tab{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.08); cursor:pointer; font-size:13px; color:var(--muted)}
+    .tab.active{background:var(--accent); color:#07381f; border:none; font-weight:700}
+
+    footer{margin-top:18px; color:var(--muted); font-size:12px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    a{color:var(--ok)}
   </style>
 </head>
-<body class="text-[15px] text-slate-800">
-  <!-- Header -->
-  <header class="max-w-6xl mx-auto px-5 pt-6">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[var(--brand)] to-[var(--brand-2)] shadow-lg"></div>
-        <div class="font-extrabold tracking-tight text-xl">VALUE</div>
-        <span class="text-sm text-slate-500 hidden sm:inline">Equanimity Trainer</span>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Valuefulness</h1>
+          <div class="tag">Daily pursuit of value‑sufficiency</div>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button id="exportBtn" class="btn btn-ghost"><i class="fa-solid fa-file-export"></i><span class="hidden sm:inline">Export</span></button>
-        <button id="settingsBtn" class="btn btn-ghost"><i class="fa-solid fa-gear"></i><span class="hidden sm:inline">Settings</span></button>
-        <button id="resetBtn" class="btn btn-ghost text-rose-600"><i class="fa-solid fa-rotate-left"></i><span class="hidden sm:inline">Reset</span></button>
+      <div class="toolbar">
+        <button class="btn" id="remindBtn">Set daily reminder</button>
+        <button class="btn" id="exportBtn">Export</button>
+        <label class="btn" for="importFile" title="Import backup">Import<input id="importFile" type="file" accept="application/json" hidden></label>
+        <button class="btn" id="resetBtn" title="Delete all data">Reset</button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Hero -->
-  <section class="max-w-6xl mx-auto px-5 pb-2 pt-5">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-      <div class="order-2 md:order-1">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-slate-900">Train meaning like a muscle.</h1>
-        <p class="mt-3 text-slate-600">Progressive daily sessions build value-awareness, sufficiency, and equanimity. Audio-guided. Data-backed. Streak friendly.</p>
-        <div class="mt-5 flex items-center gap-3">
-          <button id="ctaStart" class="btn btn-primary"><i class="fa-solid fa-play"></i> Start session</button>
-          <button id="viewCurriculum" class="btn btn-ghost"><i class="fa-solid fa-list-check"></i> Curriculum</button>
-        </div>
-        <div class="mt-4 flex items-center gap-4 text-sm text-slate-500">
-          <div class="flex items-center gap-2"><i class="fa-solid fa-fire text-amber-500"></i> Streak: <span id="streak" class="font-bold ml-1">0</span></div>
-          <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Sessions: <span id="totalSessions" class="font-bold ml-1">0</span></div>
-          <div class="flex items-center gap-2"><i class="fa-solid fa-bullseye text-indigo-500"></i> Current: <span id="currentModuleLabel" class="font-semibold ml-1">—</span></div>
-        </div>
-      </div>
-      <div class="order-1 md:order-2 flex items-center justify-center">
-        <div class="relative">
-          <div class="bubble"></div>
-          <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-center">
-            <div class="rounded-full px-4 py-2 bg-white/80 glass shadow-md text-sm">Tap <span class="font-semibold">Start</span> to begin a short breathing warm‑up.</div>
+    <div class="grid">
+      <!-- Left: ritual + gauge + chart -->
+      <section class="card">
+        <h2>Today’s ritual</h2>
+        <div class="help">One tap a day. Name one thing that felt valuable. Optional note. Done.</div>
+        <div class="big-cta">
+          <button id="tap" class="tap">Tap to log today</button>
+          <div class="stats">
+            <div class="pill" id="streakPill">🔥 Streak: 0</div>
+            <div class="pill" id="bestPill">🏆 Best: 0</div>
+            <div class="pill" id="daysPill">📅 Days logged: 0</div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto px-5 pb-16">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Player / Today -->
-      <section class="lg:col-span-2 card p-5 md:p-6">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-extrabold">Today’s Session</h2>
-          <span id="todayDate" class="text-sm text-slate-500"></span>
-        </div>
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="md:col-span-2 order-2 md:order-1">
-            <div class="rounded-xl bg-slate-50 p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <div id="todayModule" class="text-sm uppercase tracking-wide text-slate-500"></div>
-                  <div id="todayTitle" class="text-2xl font-extrabold mt-1">—</div>
-                </div>
-                <div class="relative">
-                  <svg width="84" height="84" class="meter">
-                    <defs>
-                      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="var(--brand)"/>
-                        <stop offset="100%" stop-color="var(--brand-2)"/>
-                      </linearGradient>
-                    </defs>
-                    <circle class="ring-bg" cx="42" cy="42" r="34" fill="none" stroke-width="10"/>
-                    <circle id="ring" class="ring" cx="42" cy="42" r="34" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
-                  </svg>
-                  <div class="absolute inset-0 grid place-items-center text-xs font-semibold text-slate-600"><span id="timeLeft">00:00</span></div>
-                </div>
-              </div>
+        <div style="height:16px"></div>
 
-              <div class="mt-4 flex items-center gap-2 text-sm text-slate-500">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-clock"></i> <span id="plannedDuration">—</span></span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-volume-high"></i> Voice: <span id="voiceName">auto</span></span>
-                <label class="ml-auto inline-flex items-center gap-2 cursor-pointer select-none"><input type="checkbox" id="speedMode" class="accent-indigo-600"/><span>Dev speed</span></label>
-              </div>
-
-              <div class="mt-4 grid grid-cols-3 gap-2">
-                <button id="btnBreath" class="btn btn-ghost w-full"><i class="fa-solid fa-wind"></i> Breathe</button>
-                <button id="btnGuide" class="btn btn-primary w-full"><i class="fa-solid fa-play"></i> Play guide</button>
-                <button id="btnComplete" class="btn btn-ghost w-full"><i class="fa-solid fa-flag-checkered"></i> Complete</button>
-              </div>
-
-              <div class="mt-4 text-slate-700 leading-relaxed" id="scriptPreview"></div>
+        <div class="card" style="padding:12px">
+          <div class="gauge-wrap">
+            <div class="gauge">
+              <canvas id="gaugeCanvas" width="120" height="120" aria-label="Value Sufficiency Gauge"></canvas>
+              <div class="center" id="gaugeCenter">--</div>
             </div>
-
-            <!-- Journal -->
-            <div class="mt-5 p-4 rounded-xl bg-white border border-slate-100">
-              <div class="flex items-center justify-between">
-                <h3 class="font-extrabold">Journal</h3>
-                <button id="saveJournal" class="btn btn-primary text-sm"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-              </div>
-              <p class="text-sm text-slate-500 mt-1">Rate and reflect using Mazzone’s fourfold: Cognition, Affect, Will, Value.</p>
-              <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="p-3 rounded-lg bg-slate-50">
-                  <label class="text-xs text-slate-500">Cognition</label>
-                  <input id="rateCog" type="range" min="1" max="5" value="3" class="w-full">
-                </div>
-                <div class="p-3 rounded-lg bg-slate-50">
-                  <label class="text-xs text-slate-500">Affect</label>
-                  <input id="rateAff" type="range" min="1" max="5" value="3" class="w-full">
-                </div>
-                <div class="p-3 rounded-lg bg-slate-50">
-                  <label class="text-xs text-slate-500">Will</label>
-                  <input id="rateWill" type="range" min="1" max="5" value="3" class="w-full">
-                </div>
-                <div class="p-3 rounded-lg bg-slate-50">
-                  <label class="text-xs text-slate-500">Value</label>
-                  <input id="rateVal" type="range" min="1" max="5" value="3" class="w-full">
-                </div>
-              </div>
-              <textarea id="journalText" class="mt-3 w-full rounded-lg border-slate-200 focus:ring-0 focus:border-slate-300" rows="5" placeholder="One concrete insight from today’s session…"></textarea>
+            <div>
+              <div style="font-weight:700; font-size:15px">Value‑Sufficiency Index</div>
+              <div class="help">EMA of last 30 entries (1‑5). Higher = more frequent felt sufficiency.</div>
+              <div style="height:12px"></div>
+              <div id="promptText" class="hint"></div>
             </div>
           </div>
-
-          <!-- Curriculum rail -->
-          <aside class="order-1 md:order-2 space-y-3 max-h-[680px] overflow-y-auto no-scrollbar">
-            <h3 class="text-sm uppercase tracking-wide text-slate-500">Curriculum</h3>
-            <div id="curriculum" class="space-y-2"></div>
-          </aside>
         </div>
+
+        <div style="height:16px"></div>
+        <h2>Trend</h2>
+        <canvas id="chart" width="900" height="220" aria-label="Trend chart"></canvas>
       </section>
 
-      <!-- Insights / History -->
-      <section class="card p-5 md:p-6">
-        <h2 class="text-xl font-extrabold">Insights</h2>
-        <div class="mt-3 grid grid-cols-2 gap-3 text-sm">
-          <div class="p-4 rounded-xl bg-slate-50">
-            <div class="text-slate-500">Current module</div>
-            <div id="insModule" class="font-extrabold text-lg">—</div>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50">
-            <div class="text-slate-500">Next unlock</div>
-            <div id="insNext" class="font-semibold">—</div>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50">
-            <div class="text-slate-500">Total minutes</div>
-            <div id="insMinutes" class="font-extrabold text-lg">0</div>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50">
-            <div class="text-slate-500">Completion rate</div>
-            <div id="insRate" class="font-extrabold text-lg">0%</div>
-          </div>
+      <!-- Right: history -->
+      <aside class="card">
+        <div class="tabs">
+          <button class="tab active" data-view="history">History</button>
+          <button class="tab" data-view="settings">Settings</button>
         </div>
-        <h3 class="mt-5 text-sm uppercase tracking-wide text-slate-500">Recent journals</h3>
-        <div id="history" class="mt-2 space-y-2 max-h-[420px] overflow-y-auto no-scrollbar"></div>
-      </section>
+        <div id="view-history">
+          <div class="help" style="margin-bottom:8px">Click an entry to edit. Keep notes short. Focus on the why.</div>
+          <div class="list" id="list"></div>
+        </div>
+        <div id="view-settings" style="display:none">
+          <div class="help">All data stays on your device.</div>
+          <div style="height:12px"></div>
+          <label class="hint">Daily reminder time</label>
+          <div class="row">
+            <input type="time" id="remindTime"/>
+            <button class="btn" id="saveTime">Save</button>
+          </div>
+          <div style="height:12px"></div>
+          <button class="btn" id="installBtn" style="display:none">Install app</button>
+          <div style="height:12px"></div>
+          <div class="hint">Version <span id="ver"></span>. Offline‑ready.</div>
+        </div>
+      </aside>
     </div>
-  </main>
 
-  <!-- Settings dialog -->
-  <dialog id="settingsDialog" class="card p-0 w-[92vw] max-w-2xl">
-    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-      <h3 class="text-lg font-extrabold">Settings</h3>
-      <button class="btn btn-ghost" onclick="settingsDialog.close()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="p-4 rounded-xl bg-slate-50">
-        <div class="font-semibold">Voice</div>
-        <p class="text-sm text-slate-500">Choose a speech synthesis voice for guides.</p>
-        <select id="voiceSelect" class="mt-2 w-full rounded-lg border-slate-300"></select>
-        <label class="mt-3 block text-sm">Rate <input id="voiceRate" type="range" min="0.6" max="1.3" step="0.05" value="1" class="w-full"></label>
-        <label class="mt-2 block text-sm">Pitch <input id="voicePitch" type="range" min="0.8" max="1.2" step="0.05" value="1" class="w-full"></label>
-        <label class="mt-2 block text-sm">Volume <input id="voiceVol" type="range" min="0.1" max="1" step="0.05" value="1" class="w-full"></label>
-      </div>
-      <div class="p-4 rounded-xl bg-slate-50">
-        <div class="font-semibold">Session lengths</div>
-        <p class="text-sm text-slate-500">Base minutes for the first week. Increases weekly.</p>
-        <input id="baseMinutes" type="number" min="3" max="20" value="5" class="mt-2 w-24 rounded-lg border-slate-300">
-        <p class="mt-3 text-sm text-slate-500">Progressive overload: +1 min per week in the same module.</p>
-        <div class="mt-4">
-          <label class="inline-flex items-center gap-2"><input type="checkbox" id="ambientTick" class="accent-indigo-600"/> Subtle tick every minute</label>
-        </div>
-      </div>
-      <div class="md:col-span-2 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-        <div class="font-semibold">Privacy</div>
-        <p class="text-sm text-emerald-700">All data stays in your browser (localStorage). Export/Import for backup.</p>
-        <div class="mt-3 flex items-center gap-2">
-          <button id="importBtn" class="btn btn-ghost"><i class="fa-solid fa-file-import"></i> Import</button>
-          <input type="file" id="importFile" accept="application/json" class="hidden"/>
-        </div>
-      </div>
-    </div>
-    <div class="p-4 border-t border-slate-100 flex justify-end">
-      <button class="btn btn-primary" onclick="settingsDialog.close()">Done</button>
-    </div>
-  </dialog>
+    <footer>
+      <div>Designed for zero‑friction daily use. No accounts. No feeds. One action.</div>
+      <div><span class="hint">Keyboard:</span> L = log today, S = settings, H = history</div>
+    </footer>
+  </div>
 
-  <!-- Curriculum dialog -->
-  <dialog id="curriculumDialog" class="card p-0 w-[92vw] max-w-3xl">
-    <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-      <h3 class="text-lg font-extrabold">Curriculum</h3>
-      <button class="btn btn-ghost" onclick="curriculumDialog.close()"><i class="fa-solid fa-xmark"></i></button>
+  <!-- Modal: log entry -->
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+        <div style="font-weight:700">Daily log</div>
+        <button class="btn ghost" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <div style="height:6px"></div>
+      <div id="dynPrompt" class="help" style="margin-bottom:8px"></div>
+
+      <div class="rating" aria-label="Rate today’s felt sufficiency">
+        <span class="hint" style="min-width:110px">Felt sufficiency:</span>
+        <div id="ratingDots"></div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="row">
+        <textarea id="note" rows="4" placeholder="Name one thing that felt valuable today… (optional)"></textarea>
+        <button class="btn" id="micBtn" title="Dictate note">🎤</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="todayDoneBtn" style="display:none" disabled>Today already logged</button>
+        <button class="btn" id="clearBtn">Clear</button>
+        <button class="btn primary" id="saveBtn">Save</button>
+      </div>
     </div>
-    <div id="curriculumBody" class="p-5"></div>
-    <div class="p-4 border-t border-slate-100 flex justify-end">
-      <button class="btn btn-primary" onclick="curriculumDialog.close()">Close</button>
-    </div>
-  </dialog>
+  </div>
 
   <script>
-    // ---------- Utilities ----------
-    const $ = (sel, root=document)=>root.querySelector(sel);
-    const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+  // --- Data model and storage ----------------------------------------------
+  const VERSION = '1.0.0';
+  const LS_KEY = 'pov_data_v1';
+  const state = load();
 
-    const fmtDate = (d = new Date()) => d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
-    const dayKey = (d = new Date()) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0,10);
+  function load(){
+    try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {
+      entries: [], // {date:'YYYY-MM-DD', rating:1..5, note:''}
+      bestStreak: 0,
+      settings: { reminder: null, reminderTime: '09:00' },
+    }; }catch(e){ return {entries:[], bestStreak:0, settings:{reminder:null, reminderTime:'09:00'}} }
+  }
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 
-    const storage = {
-      k:'value_trainer_v1',
-      read(){try{return JSON.parse(localStorage.getItem(this.k))||{};}catch{return {}}},
-      write(v){localStorage.setItem(this.k,JSON.stringify(v));}
-    }
+  function todayStr(d=new Date()){
+    const tzOffset = d.getTimezoneOffset(); // keep local day
+    const iso = new Date(d.getTime() - tzOffset*60000).toISOString();
+    return iso.slice(0,10);
+  }
+  function dateStr(d){
+    return new Date(d + 'T00:00:00').toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
 
-    // ---------- Curriculum Data ----------
-    const MODULES = [
-      {
-        id:'value-awareness',
-        color:'from-orange-500 to-amber-400',
-        title:'Value Awareness',
-        blurb:'Notice what actually matters. Label external vs internal value daily.',
-        weeks:2,
-        sessions:14,
-        script:(ctx)=>[
-          `Welcome. Today we train value awareness.`,
-          `Recall your last 24 hours. Pick three moments that felt important.`,
-          `For each, label it: external value—status, approval, acquisition. Or internal value—clarity, autonomy, love, equanimity.`,
-          `Say it in your mind: external or internal. Notice the body’s response.`,
-          `Pick one small action today that moves one notch toward internal value. Decide it now.`
-        ]
-      },
-      {
-        id:'error-theory',
-        color:'from-rose-500 to-pink-400',
-        title:'Error-Theory Training',
-        blurb:'Catch misperceived value. Build metacognitive distance.',
-        weeks:2,
-        sessions:14,
-        script:(ctx)=>[
-          `We are looking for value errors—moments we confuse means for ends.`,
-          `Scan today. Where did you assume owning or winning equals worth?` ,
-          `Name the error: projection or status substitution.` ,
-          `Visualize releasing that assumption. Ask: what is the sufficient value here, without the prop?` ,
-          `Choose a tiny practice to test this today.`
-        ]
-      },
-      {
-        id:'sufficiency',
-        color:'from-amber-500 to-yellow-400',
-        title:'Sufficiency Calibration',
-        blurb:'Condition the felt sense of “enough now”.',
-        weeks:2,
-        sessions:14,
-        script:(ctx)=>[
-          `We contrast two states. Deficiency: I need. Sufficiency: enough now.` ,
-          `Breathe in, recall a recent grasping. Exhale, say: enough now.` ,
-          `Locate sufficiency in the body. Warmth, space, ease.` ,
-          `Enlarge it one percent. Hold for two breaths.` ,
-          `Pick a daily cue—opening a door, making tea—to trigger: enough now.`
-        ]
-      },
-      {
-        id:'will-to-value',
-        color:'from-indigo-500 to-blue-400',
-        title:'Will‑to‑Value Strengthening',
-        blurb:'Make one micro‑decision per day that increases value sufficiency. Then two.',
-        weeks:2,
-        sessions:14,
-        script:(ctx)=>[
-          `Choose one micro‑decision you will face today—food, reply, scroll.` ,
-          `Ask: does this increase value sufficiency?` ,
-          `Pre‑commit now. Visualize the friction and your answer.` ,
-          `End with one sentence intention.`
-        ]
-      },
-      {
-        id:'loss-equanimity',
-        color:'from-emerald-500 to-teal-400',
-        title:'Loss Equanimity',
-        blurb:'Rehearse loss. Find the value that remains.',
-        weeks:2,
-        sessions:14,
-        script:(ctx)=>[
-          `Bring to mind a small loss. A plan changed. An item gone.` ,
-          `Feel the contraction. Name it.` ,
-          `Ask: what value persists despite this?` ,
-          `Anchor to that value for two breaths.` ,
-          `Carry one sentence: Even without X, I keep Y.`
-        ]
-      },
-      {
-        id:'integration',
-        color:'from-slate-700 to-slate-500',
-        title:'Integration',
-        blurb:'Daily fourfold check: Cognition, Affect, Will, Value. Tighten the loop.',
-        weeks:99,
-        sessions:9999,
-        script:(ctx)=>[
-          `Review the day across four dimensions: Cognition, Affect, Will, Value.` ,
-          `Which one most constrained value sufficiency?` ,
-          `Choose one lever for tomorrow.`
-        ]
+  // --- Streaks ---------------------------------------------------------------
+  function computeStreaks(){
+    if(!state.entries.length) return {streak:0, best: state.bestStreak||0};
+    const dates = [...new Set(state.entries.map(e=>e.date))].sort();
+    let streak=0, best=state.bestStreak||0;
+    const today=todayStr();
+    // Walk backwards from today
+    let day = new Date(today+'T00:00:00');
+    for(let i=0;;i++){
+      const ds = todayStr(day);
+      if(dates.includes(ds)) { streak++; day.setDate(day.getDate()-1); }
+      else {
+        // allow one grace gap if yesterday missing but day before exists? No. Keep strict.
+        break;
       }
-    ];
+    }
+    // Compute best
+    let cur=1;
+    for(let i=1;i<dates.length;i++){
+      const d1=new Date(dates[i-1]+'T00:00:00');
+      const d2=new Date(dates[i]+'T00:00:00');
+      const diff=(d2-d1)/(1000*60*60*24);
+      if(diff===1) cur++; else { if(cur>best) best=cur; cur=1; }
+    }
+    if(cur>best) best=cur;
+    // Update stored best if improved
+    if(best>state.bestStreak){ state.bestStreak=best; save(); }
+    return {streak, best};
+  }
 
-    // ---------- State ----------
-    const state = {
-      get data(){
-        const d = storage.read();
-        return Object.assign({
-          streak:0,
-          lastDay:null,
-          sessions:0,
-          minutes:0,
-          moduleIndex:0,
-          perModuleDone:{},
-          journal:[],
-          settings:{
-            voice:null, rate:1, pitch:1, vol:1,
-            baseMinutes:5,
-            ambientTick:false
+  // --- EMA for Value‑Sufficiency -------------------------------------------
+  function vsiEMA(N=30){
+    const k = 2/(N+1);
+    const vals = state.entries.slice(-N).map(e=>e.rating||3);
+    if(!vals.length) return null;
+    let ema = vals[0];
+    for(let i=1;i<vals.length;i++) ema = vals[i]*k + ema*(1-k);
+    return +ema.toFixed(2);
+  }
+
+  // --- Adaptive prompts -----------------------------------------------------
+  const PROMPTS = [
+    'Name one thing that felt valuable today.',
+    'What, precisely, made that feel enough?',
+    'Remove the object. What quality remains valuable?',
+    'Who else benefited from that value?',
+    'What would make this valuable with nothing added?',
+  ];
+  function currentPrompt(){
+    const n = state.entries.length;
+    const idx = Math.min(Math.floor(n/7), PROMPTS.length-1);
+    return PROMPTS[idx];
+  }
+
+  // --- UI elements ----------------------------------------------------------
+  const $ = s=>document.querySelector(s);
+  const $all = s=>Array.from(document.querySelectorAll(s));
+  const tapBtn = $('#tap');
+  const listEl = $('#list');
+  const streakPill = $('#streakPill');
+  const bestPill = $('#bestPill');
+  const daysPill = $('#daysPill');
+  const promptText = $('#promptText');
+  const verEl = $('#ver'); verEl.textContent = VERSION;
+
+  // Modal
+  const modal = $('#modal');
+  const closeModal = $('#closeModal');
+  const dynPrompt = $('#dynPrompt');
+  const note = $('#note');
+  const micBtn = $('#micBtn');
+  const ratingDots = $('#ratingDots');
+  const clearBtn = $('#clearBtn');
+  const saveBtn = $('#saveBtn');
+  const todayDoneBtn = $('#todayDoneBtn');
+
+  // Settings
+  const remindBtn = $('#remindBtn');
+  const remindTime = $('#remindTime'); remindTime.value = state.settings.reminderTime || '09:00';
+  const saveTime = $('#saveTime');
+  const installBtn = $('#installBtn');
+  const exportBtn = $('#exportBtn');
+  const importFile = $('#importFile');
+  const resetBtn = $('#resetBtn');
+
+  // Tabs
+  $all('.tab').forEach(t=> t.addEventListener('click', ()=>{
+    $all('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const v = t.dataset.view;
+    $('#view-history').style.display = v==='history'? 'block':'none';
+    $('#view-settings').style.display = v==='settings'? 'block':'none';
+  }));
+
+  // --- Build rating dots ----------------------------------------------------
+  let curRating = 4; // pre‑select mild positivity to reduce friction
+  function drawDots(sel=curRating){
+    ratingDots.innerHTML='';
+    for(let i=1;i<=5;i++){
+      const d=document.createElement('button');
+      d.className='dot' + (i===sel?' sel':'');
+      d.textContent=i;
+      d.setAttribute('aria-label','Rating '+i);
+      d.onclick=()=>{curRating=i; drawDots(i); drawGauge();};
+      ratingDots.appendChild(d);
+    }
+  }
+  drawDots();
+
+  // --- Modal open/close -----------------------------------------------------
+  function openModal(){
+    dynPrompt.textContent = currentPrompt();
+    note.value='';
+    todayDoneBtn.style.display='none';
+    saveBtn.disabled=false;
+    if(isTodayLogged()){
+      todayDoneBtn.style.display='inline-flex';
+      saveBtn.disabled=false; // allow second entry if desired
+    }
+    modal.classList.add('open');
+    note.focus({preventScroll:true});
+  }
+  function close(){ modal.classList.remove('open'); }
+  closeModal.onclick = close; document.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
+
+  tapBtn.onclick = openModal;
+
+  clearBtn.onclick = ()=>{ note.value=''; };
+
+  saveBtn.onclick = ()=>{
+    const entry = { date: todayStr(), rating: curRating, note: note.value.trim() };
+    state.entries.push(entry);
+    save();
+    render();
+    close();
+  };
+
+  // --- Voice dictation ------------------------------------------------------
+  let recognizer = null; let listening=false;
+  try{ const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if(SR){
+    recognizer = new SR(); recognizer.lang = navigator.language || 'en-US'; recognizer.interimResults=true;
+    recognizer.onresult = e=>{ const t = Array.from(e.results).map(r=>r[0].transcript).join(' '); note.value = t; };
+    recognizer.onend = ()=>{ listening=false; micBtn.textContent='🎤'; };
+  }}catch(e){}
+  micBtn.onclick = ()=>{
+    if(!recognizer){ alert('Speech recognition not supported in this browser.'); return; }
+    if(listening){ recognizer.stop(); return; }
+    listening=true; micBtn.textContent='■'; recognizer.start();
+  };
+
+  // --- History list ---------------------------------------------------------
+  function renderList(){
+    const arr = [...state.entries].sort((a,b)=> a.date<b.date?1:-1);
+    listEl.innerHTML = arr.map((e,i)=>{
+      const idx = state.entries.indexOf(e);
+      const r = e.rating||3; const color = r>=4? 'color:var(--ok)': r<=2? 'color:var(--warn)': 'color:var(--muted)';
+      return `<div class="item" data-idx="${idx}">
+        <div>
+          <div class="date">${dateStr(e.date)}</div>
+          <div style="${color}; font-weight:700">${'•'.repeat(r)}${'·'.repeat(5-r)}</div>
+        </div>
+        <div class="note">${e.note? e.note.replace(/[<>&]/g, s=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[s])): '<span class="hint">(no note)</span>'}</div>
+        <div class="row">
+          <button class="btn" data-act="edit">Edit</button>
+          <button class="btn danger" data-act="del">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+    // wire buttons
+    $all('.item').forEach(it=>{
+      const idx = +it.dataset.idx;
+      it.querySelector('[data-act="edit"]').onclick = ()=> editEntry(idx);
+      it.querySelector('[data-act="del"]').onclick = ()=> delEntry(idx);
+    });
+  }
+  function editEntry(idx){
+    const e = state.entries[idx];
+    curRating = e.rating||3; drawDots(curRating);
+    dynPrompt.textContent = 'Edit entry';
+    note.value = e.note||'';
+    modal.classList.add('open');
+    saveBtn.onclick = ()=>{
+      e.rating = curRating;
+      e.note = note.value.trim();
+      save(); render(); close();
+      // restore save handler for normal flow
+      saveBtn.onclick = defaultSave;
+    };
+  }
+  const defaultSave = saveBtn.onclick;
+  function delEntry(idx){
+    if(!confirm('Delete this entry?')) return;
+    state.entries.splice(idx,1); save(); render();
+  }
+
+  function isTodayLogged(){ return state.entries.some(e=>e.date===todayStr()); }
+
+  // --- Pills and prompt -----------------------------------------------------
+  function renderMeta(){
+    const {streak, best} = computeStreaks();
+    streakPill.textContent = `🔥 Streak: ${streak}`;
+    bestPill.textContent = `🏆 Best: ${best}`;
+    daysPill.textContent = `📅 Days logged: ${state.entries.length}`;
+    promptText.textContent = currentPrompt();
+    tapBtn.disabled = false; // keep enabled always
+    if(isTodayLogged()) tapBtn.textContent = 'Add another note'; else tapBtn.textContent='Tap to log today';
+  }
+
+  // --- Gauge ---------------------------------------------------------------
+  function drawGauge(){
+    const cvs = document.getElementById('gaugeCanvas'); const ctx = cvs.getContext('2d');
+    const w=cvs.width, h=cvs.height; ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, r=50; const start = Math.PI*.8, end = Math.PI*2.2; // 1.4π span
+    // background arc
+    ctx.lineWidth=12; ctx.strokeStyle='rgba(255,255,255,.10)'; ctx.beginPath(); ctx.arc(cx,cy,r,start,end); ctx.stroke();
+    // value arc
+    const ema = vsiEMA()||0; const norm = Math.min(1, Math.max(0, (ema-1)/4));
+    const valAng = start + (end-start)*norm;
+    const grad = ctx.createLinearGradient(0,0,w,0); grad.addColorStop(0,'#4affb4'); grad.addColorStop(1,'#12a65a');
+    ctx.strokeStyle=grad; ctx.beginPath(); ctx.arc(cx,cy,r,start,valAng); ctx.stroke();
+    // center label
+    const center = document.getElementById('gaugeCenter');
+    center.textContent = ema? ema.toFixed(2): '--';
+  }
+
+  // --- Chart ---------------------------------------------------------------
+  function drawChart(){
+    const cvs = document.getElementById('chart'); const ctx = cvs.getContext('2d');
+    const w=cvs.width, h=cvs.height; ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = '#0a1411'; ctx.fillRect(0,0,w,h);
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1; ctx.beginPath();
+    for(let i=1;i<=4;i++){ const y=h - i*(h/5); ctx.moveTo(40,y); ctx.lineTo(w-10,y);} ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='12px ui-sans-serif';
+    for(let i=1;i<=5;i++){ const y=h - i*(h/5); ctx.fillText(String(i), 8, y+4); }
+
+    const points = [...state.entries].slice(-60);
+    if(points.length<2){ ctx.fillStyle='rgba(255,255,255,.5)'; ctx.fillText('Need more entries for trend', w/2-90, h/2); return; }
+    // scale
+    const padL=40, padR=10, padT=10, padB=22;
+    const xmin=0, xmax=points.length-1;
+    const xScale = (i)=> padL + (i-xmin)/(xmax-xmin) * (w-padL-padR);
+    const yScale = (r)=> padT + (1-(r-1)/4) * (h-padT-padB);
+
+    // line
+    ctx.strokeStyle='#2bd671'; ctx.lineWidth=2.2; ctx.beginPath();
+    points.forEach((e,i)=>{ const x=xScale(i), y=yScale(e.rating||3); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+    ctx.stroke();
+
+    // markers
+    ctx.fillStyle='#2bd671';
+    points.forEach((e,i)=>{ const x=xScale(i), y=yScale(e.rating||3); ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill(); });
+  }
+
+  // --- Reminders -----------------------------------------------------------
+  async function requestNotify(){
+    if(!('Notification' in window)) { alert('Notifications not supported.'); return false; }
+    if(Notification.permission==='granted') return true;
+    const p = await Notification.requestPermission();
+    return p==='granted';
+  }
+  remindBtn.onclick = async ()=>{
+    const ok = await requestNotify(); if(!ok) return;
+    scheduleReminderTick();
+    alert('Daily reminder is set for '+ (state.settings.reminderTime||'09:00') +'. Keep a tab open for on‑time alerts.');
+  };
+  saveTime.onclick = ()=>{ state.settings.reminderTime = remindTime.value||'09:00'; save(); scheduleReminderTick(true); };
+
+  function scheduleReminderTick(reset=false){
+    if(reset && window._remTimer){ clearInterval(window._remTimer); }
+    try{ if(window._remTimer) return; }catch(e){}
+    window._remTimer = setInterval(()=>{
+      const t = state.settings.reminderTime||'09:00';
+      const [hh,mm] = t.split(':').map(x=>+x);
+      const now = new Date();
+      if(now.getHours()===hh && now.getMinutes()===mm && now.getSeconds()<5){
+        const already = isTodayLogged();
+        new Notification('Valuefulness', { body: already? 'Optional second note.' : 'Time to log today. One thing that felt valuable.' });
+      }
+    }, 1000*5);
+  }
+
+  // --- Export / Import / Reset --------------------------------------------
+  exportBtn.onclick = ()=>{
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='valuefulness-backup.json'; a.click(); URL.revokeObjectURL(a.href);
+  };
+  importFile.onchange = async (e)=>{
+    const f = e.target.files[0]; if(!f) return; const t = await f.text();
+    try{ const obj = JSON.parse(t); if(!obj.entries) throw new Error('Invalid'); Object.assign(state, obj); save(); render(); }
+    catch(err){ alert('Invalid backup file.'); }
+    finally{ e.target.value=''; }
+  };
+  resetBtn.onclick = ()=>{
+    if(!confirm('This deletes all entries. Continue?')) return;
+    localStorage.removeItem(LS_KEY); location.reload();
+  };
+
+  // --- Keyboard shortcuts ---------------------------------------------------
+  document.addEventListener('keydown', e=>{
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(e.key.toLowerCase()==='l') openModal();
+    if(e.key.toLowerCase()==='s') $all('.tab')[1].click();
+    if(e.key.toLowerCase()==='h') $all('.tab')[0].click();
+  });
+
+  // --- PWA: create a blob manifest + service worker -------------------------
+  (function(){
+    // Manifest via blob so we stay single‑file
+    const manifest = { name:'Valuefulness', short_name:'Valuefulness', start_url:'./', display:'standalone', background_color:'#0c1210', theme_color:'#2bd671', icons:[] };
+    const mblob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const link = document.createElement('link'); link.rel='manifest'; link.href=URL.createObjectURL(mblob); document.head.appendChild(link);
+
+    // Service worker via blob for offline cache
+    if('serviceWorker' in navigator){
+      const swCode = `
+        const CACHE='pov-cache-v1';
+        self.addEventListener('install', e=>{ e.waitUntil( caches.open(CACHE).then(c=>c.addAll(['./'])) ); self.skipWaiting(); });
+        self.addEventListener('activate', e=>{ e.waitUntil( caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))) ); self.clients.claim(); });
+        self.addEventListener('fetch', e=>{
+          const url=new URL(e.request.url);
+          if(url.origin===location.origin){
+            e.respondWith( caches.match(e.request).then(r=> r||fetch(e.request).then(res=>{ const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)); return res; }).catch(()=>caches.match('./')) ) );
           }
-        }, d);
-      },
-      set data(v){ storage.write(v); }
-    };
-
-    // ---------- Rendering ----------
-    const el = {
-      streak: $('#streak'),
-      total: $('#totalSessions'),
-      curr: $('#currentModuleLabel'),
-      todayDate: $('#todayDate'),
-      todayModule: $('#todayModule'),
-      todayTitle: $('#todayTitle'),
-      planned: $('#plannedDuration'),
-      ring: $('#ring'),
-      timeLeft: $('#timeLeft'),
-      scriptPreview: $('#scriptPreview'),
-      curriculum: $('#curriculum'),
-      insModule: $('#insModule'),
-      insNext: $('#insNext'),
-      insMinutes: $('#insMinutes'),
-      insRate: $('#insRate'),
-      history: $('#history'),
-      speedMode: $('#speedMode'),
-    };
-
-    function currentModule(d){ return MODULES[d.moduleIndex] }
-
-    function plannedMinutes(d){
-      const mod = currentModule(d);
-      const done = (d.perModuleDone[mod.id]||0);
-      const week = Math.floor(done/7); // increments weekly
-      return Math.min(60, (d.settings?.baseMinutes||5) + week);
+        });`;
+      const blob = new Blob([swCode], {type:'text/javascript'});
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(()=>{});
     }
+  })();
 
-    function renderDashboard(){
-      const d = state.data;
-      const mod = currentModule(d);
-      el.streak.textContent = d.streak||0;
-      el.total.textContent = d.sessions||0;
-      el.curr.textContent = mod.title;
-      el.todayDate.textContent = fmtDate();
-      el.todayModule.textContent = mod.title;
-      el.todayTitle.textContent = sessionTitle(d, mod);
-      const mins = plannedMinutes(d);
-      el.planned.textContent = `${mins} min`;
-      $('#insModule').textContent = mod.title;
-      $('#insMinutes').textContent = d.minutes||0;
-      $('#insRate').textContent = d.sessions ? Math.round((d.journal.length/d.sessions)*100)+'%' : '0%';
-      const next = MODULES[d.moduleIndex+1];
-      $('#insNext').textContent = next ? `Unlocks when ${mod.title} reaches ${(mod.sessions)} sessions` : '—';
-
-      // Preview script
-      el.scriptPreview.innerHTML = currentModule(d).script({}).map(s=>`<p class="mt-2">${s}</p>`).join('');
-
-      renderCurriculum();
-      renderHistory();
-      updateRing(0);
-      updateTimeLeft(mins*60);
-    }
-
-    function sessionTitle(d, mod){
-      const n = (d.perModuleDone[mod.id]||0)+1;
-      return `${mod.title} · Day ${n}`
-    }
-
-    function renderCurriculum(){
-      const d = state.data;
-      el.curriculum.innerHTML = '';
-      MODULES.forEach((m,idx)=>{
-        const done = d.perModuleDone[m.id]||0;
-        const locked = idx>d.moduleIndex;
-        const pct = Math.min(100, Math.round((done/(m.sessions||14))*100));
-        const item = document.createElement('div');
-        item.className = `p-4 rounded-xl border ${locked? 'border-slate-200 bg-white/60': 'border-white bg-slate-50'}`;
-        item.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${m.color}"></div>
-            <div class="flex-1">
-              <div class="font-extrabold">${m.title}</div>
-              <div class="text-sm text-slate-500">${m.blurb}</div>
-            </div>
-            <div class="text-right">
-              <div class="text-sm ${locked? 'text-slate-400':'text-slate-600'}">${done}/${m.sessions===9999?'∞':m.sessions}</div>
-              <div class="w-28 h-2 bg-slate-200 rounded-full mt-2"><div style="width:${pct}%" class="h-2 rounded-full bg-gradient-to-r ${m.color}"></div></div>
-            </div>
-          </div>
-          <div class="mt-3 flex items-center gap-2">
-            <button ${locked?'disabled':''} data-idx="${idx}" class="chooseModule btn btn-ghost text-sm ${locked?'opacity-50 cursor-not-allowed':''}"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${locked?'Locked': 'Switch here'}</button>
-          </div>`;
-        el.curriculum.appendChild(item);
-      });
-      $$('.chooseModule').forEach(b=>b.addEventListener('click',()=>{
-        const idx = +b.dataset.idx;
-        const d = state.data; d.moduleIndex = idx; state.data = d; renderDashboard();
-      }));
-    }
-
-    function renderHistory(){
-      const d = state.data;
-      el.history.innerHTML = '';
-      [...(d.journal||[])].reverse().slice(0,20).forEach(j=>{
-        const card = document.createElement('div');
-        card.className = 'p-3 rounded-lg border border-slate-100 bg-white';
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="font-semibold">${j.title}</div>
-            <div class="text-xs text-slate-500">${fmtDate(new Date(j.date))}</div>
-          </div>
-          <div class="mt-1 text-xs text-slate-500">C${j.cog} · A${j.aff} · W${j.will} · V${j.val}</div>
-          <p class="mt-2 text-sm">${j.note? j.note.replace(/</g,'&lt;') : ''}</p>
-        `;
-        el.history.appendChild(card);
-      })
-    }
-
-    // ---------- Timer & Ring ----------
-    let sessionSecs = 0, remaining = 0, ticker=null, minuteTicker=null, playing=false;
-
-    function updateRing(progress){
-      const CIRC = 2*Math.PI*34; // 213.6
-      const off = CIRC*(1-progress);
-      el.ring.setAttribute('stroke-dashoffset', off);
-    }
-
-    function updateTimeLeft(sec){
-      const m = Math.floor(sec/60), s = Math.floor(sec%60);
-      el.timeLeft.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    }
-
-    function startTimer(totalSec){
-      clearInterval(ticker); clearInterval(minuteTicker);
-      sessionSecs = totalSec; remaining = totalSec; playing=true;
-      const start = Date.now();
-      ticker = setInterval(()=>{
-        const elapsed = (Date.now()-start)/1000;
-        remaining = Math.max(0, totalSec - elapsed);
-        updateTimeLeft(remaining);
-        updateRing( (elapsed/totalSec) );
-        if(remaining<=0){ stopTimer(); chime(); }
-      }, 200);
-      const d = state.data; if(d.settings.ambientTick){ minuteTicker = setInterval(()=>tick(), 60000) }
-    }
-
-    function stopTimer(){ clearInterval(ticker); clearInterval(minuteTicker); playing=false; }
-
-    function chime(){
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type='sine'; o.frequency.value=880; g.gain.value=0.0001; o.connect(g); g.connect(ctx.destination);
-      o.start(); g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.8);
-      setTimeout(()=>{o.stop(); ctx.close()},900);
-    }
-    function tick(){
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type='square'; o.frequency.value=880; g.gain.value=0.0001; o.connect(g); g.connect(ctx.destination);
-      o.start(); g.gain.exponentialRampToValueAtTime(0.1, ctx.currentTime+0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.15);
-      setTimeout(()=>{o.stop(); ctx.close()},180);
-    }
-
-    // ---------- Speech ----------
-    let voices=[];
-    function loadVoices(){ voices = speechSynthesis.getVoices(); fillVoiceSelect(); }
-    function fillVoiceSelect(){
-      const sel = $('#voiceSelect'); sel.innerHTML='';
-      const d = state.data;
-      voices.forEach((v,i)=>{
-        const opt = document.createElement('option');
-        opt.value=i; opt.textContent=`${v.name} (${v.lang})${v.default?' • default':''}`;
-        if(d.settings.voice && d.settings.voice.name===v.name) opt.selected=true;
-        sel.appendChild(opt);
-      });
-      $('#voiceName').textContent = d.settings.voice? d.settings.voice.name : 'auto';
-    }
-
-    function speak(lines){
-      if(!('speechSynthesis' in window)) { alert('Speech synthesis not supported. Read the script text instead.'); return; }
-      speechSynthesis.cancel();
-      const d = state.data; const seq = [];
-      lines.forEach((t,i)=>{
-        const u = new SpeechSynthesisUtterance(t);
-        const v = d.settings.voice && voices.find(x=>x.name===d.settings.voice.name);
-        if(v) u.voice=v; u.rate=d.settings.rate||1; u.pitch=d.settings.pitch||1; u.volume=d.settings.vol||1;
-        seq.push(u);
-      });
-      seq.forEach(u=>speechSynthesis.speak(u));
-    }
-
-    // ---------- Actions ----------
-    function doBreath(){
-      const devFast = el.speedMode.checked;
-      const inhale = devFast? 2:4, hold=devFast?1:2, exhale=devFast?3:6;
-      const rounds = devFast? 3: 8;
-      const lines = [
-        `We will breathe ${rounds} rounds. Inhale ${inhale}, hold ${hold}, exhale ${exhale}.` ,
-      ];
-      speak(lines);
-      const total = (inhale+hold+exhale)*rounds;
-      startTimer(total);
-    }
-
-    function doGuide(){
-      const d = state.data; const mod = currentModule(d);
-      const dev = el.speedMode.checked;
-      const mins = plannedMinutes(d);
-      const secs = dev? Math.max(45, mins*60/10): mins*60; // dev speed ≈ 10x
-      startTimer(secs);
-      speak(mod.script({}));
-    }
-
-    function completeSession(){
-      const d = state.data; const today = dayKey();
-      if(d.lastDay){
-        const last = new Date(d.lastDay); const diff = (new Date(today)-new Date(d.lastDay))/86400000;
-        d.streak = diff===1 ? (d.streak||0)+1 : diff===0 ? d.streak : 1;
-      } else { d.streak = 1; }
-      d.lastDay = today;
-      d.sessions = (d.sessions||0)+1;
-      const mins = plannedMinutes(d); d.minutes = (d.minutes||0)+mins;
-      const mod = currentModule(d);
-      d.perModuleDone[mod.id] = (d.perModuleDone[mod.id]||0)+1;
-      // Unlock next module when threshold reached
-      if(d.perModuleDone[mod.id] >= (mod.sessions||14)) d.moduleIndex = Math.min(d.moduleIndex+1, MODULES.length-1);
-      state.data = d; chime(); renderDashboard();
-    }
-
-    function saveJournal(){
-      const d = state.data; const mod = currentModule(d);
-      const entry = {
-        date: new Date().toISOString(),
-        title: sessionTitle(d, mod),
-        mod: mod.id,
-        cog: +$('#rateCog').value,
-        aff: +$('#rateAff').value,
-        will:+$('#rateWill').value,
-        val: +$('#rateVal').value,
-        note: $('#journalText').value.trim()
-      };
-      d.journal = d.journal||[]; d.journal.push(entry); state.data = d; renderHistory();
-      $('#journalText').value=''; chime();
-    }
-
-    // ---------- Export / Import / Reset ----------
-    function exportData(){
-      const blob = new Blob([JSON.stringify(state.data,null,2)],{type:'application/json'});
-      const url = URL.createObjectURL(blob); const a = document.createElement('a');
-      a.href=url; a.download='value-trainer-backup.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
-
-    function importData(f){
-      const reader = new FileReader(); reader.onload = e=>{ try{ state.data = JSON.parse(e.target.result); renderDashboard(); }catch{ alert('Invalid file') } }; reader.readAsText(f);
-    }
-
-    function resetAll(){ if(confirm('Reset all local data?')){ localStorage.removeItem(storage.k); renderDashboard(); }}
-
-    // ---------- Curriculum modal content ----------
-    function buildCurriculumModal(){
-      const root = $('#curriculumBody'); root.innerHTML='';
-      MODULES.forEach((m,i)=>{
-        const card = document.createElement('div');
-        card.className='p-4 rounded-xl border border-slate-100 bg-white mb-3';
-        card.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${m.color}"></div>
-            <div>
-              <div class="font-extrabold">${i+1}. ${m.title}</div>
-              <div class="text-sm text-slate-500">${m.blurb}</div>
-            </div>
-          </div>
-          <ol class="mt-3 list-decimal pl-6 text-sm text-slate-700">
-            ${m.script({}).map(s=>`<li class="mt-1">${s}</li>`).join('')}
-          </ol>
-        `;
-        root.appendChild(card);
-      })
-    }
-
-    // ---------- Settings sync ----------
-    function syncSettingsToUI(){
-      const d = state.data;
-      $('#voiceRate').value = d.settings.rate||1;
-      $('#voicePitch').value = d.settings.pitch||1;
-      $('#voiceVol').value  = d.settings.vol||1;
-      $('#baseMinutes').value = d.settings.baseMinutes||5;
-      $('#ambientTick').checked = !!d.settings.ambientTick;
-      $('#voiceName').textContent = d.settings.voice? d.settings.voice.name : 'auto';
-    }
-
-    function saveSettingsFromUI(){
-      const d = state.data;
-      d.settings.rate = +$('#voiceRate').value;
-      d.settings.pitch= +$('#voicePitch').value;
-      d.settings.vol  = +$('#voiceVol').value;
-      d.settings.baseMinutes = Math.max(3, Math.min(20, +$('#baseMinutes').value||5));
-      d.settings.ambientTick = !!$('#ambientTick').checked;
-      const sel = $('#voiceSelect');
-      if(sel.value){ const v = voices[+sel.value]; if(v) d.settings.voice={name:v.name, lang:v.lang}; }
-      state.data = d; syncSettingsToUI(); renderDashboard();
-    }
-
-    // ---------- Event wiring ----------
-    function wire(){
-      $('#ctaStart').addEventListener('click', doGuide);
-      $('#btnGuide').addEventListener('click', doGuide);
-      $('#btnBreath').addEventListener('click', doBreath);
-      $('#btnComplete').addEventListener('click', completeSession);
-      $('#saveJournal').addEventListener('click', saveJournal);
-      $('#settingsBtn').addEventListener('click', ()=>{ settingsDialog.showModal(); syncSettingsToUI(); });
-      $('#viewCurriculum').addEventListener('click', ()=>{ buildCurriculumModal(); curriculumDialog.showModal(); });
-      $('#exportBtn').addEventListener('click', exportData);
-      $('#importBtn').addEventListener('click', ()=>$('#importFile').click());
-      $('#importFile').addEventListener('change', e=>{ if(e.target.files[0]) importData(e.target.files[0]); });
-      $('#resetBtn').addEventListener('click', resetAll);
-      $('#voiceSelect').addEventListener('change', saveSettingsFromUI);
-      $('#voiceRate').addEventListener('input', saveSettingsFromUI);
-      $('#voicePitch').addEventListener('input', saveSettingsFromUI);
-      $('#voiceVol').addEventListener('input', saveSettingsFromUI);
-      $('#baseMinutes').addEventListener('change', saveSettingsFromUI);
-      $('#ambientTick').addEventListener('change', saveSettingsFromUI);
-    }
-
-    // ---------- Init ----------
-    function init(){
-      try{ renderDashboard(); wire(); }catch(e){ console.error(e); alert('Init error: '+e.message); }
-      if('speechSynthesis' in window){
-        speechSynthesis.onvoiceschanged = ()=>{ loadVoices(); };
-        // Some engines need an initial call
-        setTimeout(loadVoices, 150);
-      }
-    }
-
-    init();
+  // --- Initial render -------------------------------------------------------
+  function render(){ renderMeta(); drawGauge(); drawChart(); renderList(); }
+  render();
+  scheduleReminderTick();
   </script>
 </body>
 </html>
