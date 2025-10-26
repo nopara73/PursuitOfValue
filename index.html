@@ -1049,6 +1049,67 @@ historyEl.addEventListener('keydown', e=>{
   if(e.key.toLowerCase()==='s') start.click();
 });
 </script>
+<script id="pov-analytics-beacon">
+(function(){
+  var POV_ENDPOINT = 'https://small-hill-d607.adam-ficsor73.workers.dev/collect';
+
+  function payload(event, props){
+    return JSON.stringify({
+      t: Date.now(),
+      event: event,
+      props: props || {},
+      path: location.pathname,
+      ref: document.referrer,
+      ua: navigator.userAgent
+    });
+  }
+  function send(event, props){
+    try{
+      var data = payload(event, props);
+      if(navigator.sendBeacon){
+  var blob = new Blob([data], {type:'text/plain'});
+  navigator.sendBeacon(POV_ENDPOINT, blob);
+}else{
+  fetch(POV_ENDPOINT, {
+    method:'POST',
+    mode:'cors',
+    credentials:'omit',
+    headers:{'Content-Type':'text/plain'},
+    body:data,
+    keepalive:true
+  });
+}
+
+    }catch(_){}
+  }
+  function on(el, ev, fn){ if(el) el.addEventListener(ev, fn, { passive:true }); }
+
+  on(document.getElementById('start'), 'click', () => send('start_session', { chapter:S.chapter+1, day:S.day+1 }));
+  on(document.getElementById('next'), 'click', () => send('session_next', { stage:stage }));
+  on(document.getElementById('save'), 'click', () => send('save_entry', {
+    chapter:S.chapter+1, day:S.day+1, eq:curEq, note_len:(document.getElementById('answer').value||'').length
+  }));
+  on(document.getElementById('exportBtn'), 'click', () => send('export'));
+  on(document.getElementById('importFile'), 'change', () => send('import'));
+  on(document.getElementById('resetBtn'), 'click', () => send('reset'));
+  on(document.getElementById('povSaveBtn'), 'click', () => send('open_bookmark_modal'));
+  on(document.getElementById('povCopyLink'), 'click', () => send('copy_link'));
+
+  on(document.getElementById('history'), 'click', e=>{
+    const el=e.target.closest('.histItem'); if(!el) return;
+    const ts=+el.dataset.ts; const it=S.entries.find(x=>x.ts===ts);
+    if(it) send('open_history', { chapter:it.chapter+1, day:it.day+1, eq:typeof it.eq==='number'?it.eq:null });
+  });
+
+  on(document.getElementById('eqDots'), 'click', e=>{
+    const b=e.target.closest('.povEqDot'); if(!b) return;
+    const v=+b.textContent||curEq; send('eq_select', { value:v });
+  });
+
+  send('page_loaded', { entries:S.entries.length, chapter:S.chapter+1, day:S.day+1 });
+})();
+</script>
+
 
 <section class="povStore" aria-labelledby="povStoreTitle">
   <a class="povBuyLink" href="https://www.amazon.com/Pursuit-Value-Philosophy-Loss-Equanimity/dp/1979976015" target="_blank" rel="noopener noreferrer">
