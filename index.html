@@ -448,7 +448,7 @@ closeBtn.onclick=()=> modal.classList.remove('open');
 
 function buildCumulative(chIndex, dayIndex){
   const items = PROGRAM[chIndex].overload.slice(0, dayIndex+1)
-    .map((t,i)=>`<li>Day ${i+1} — ${t}</li>`).join('');
+    .map((t,i)=>`<li>${t}</li>`).join('');
   return `<div class="muted">Do the following today:</div><ul>${items}</ul>`;
 }
 
