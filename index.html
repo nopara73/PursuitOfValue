@@ -190,21 +190,29 @@
 }
 
 /* === overrides: history header spacing === */
-.historyPane > .row{
-  display:grid !important;
-  grid-template-columns:auto 1fr auto;
-  align-items:center;
-  column-gap:16px;
-  padding-bottom:10px;
+.historyPane > .row {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
 }
+
 .historyPane > .row .muted{justify-self:center}
 .utilActions{margin-left:0 !important; gap:12px}
 .btn.sm{padding:6px 12px; min-height:34px}
 @media (max-width:700px){
-  .historyPane > .row{grid-template-columns:1fr; row-gap:8px;}
-  .historyPane > .row .muted{justify-self:start}
-  .utilActions{justify-self:end}
+  .historyPane > .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .utilActions {
+    align-self: flex-end;
+  }
 }
+
 
 </style>
 </head>
