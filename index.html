@@ -38,6 +38,11 @@
   .big{padding:14px}
   #eqRow span{min-width:auto}
 }
+
+.povKbd{display:inline-block;min-width:22px;padding:2px 6px;border:1px solid var(--line);border-radius:6px;background:#0b1512;font-size:12px;color:var(--ink);text-align:center}
+.povDrag{display:inline-block;text-decoration:none}
+.povDrag::before{content:"★ ";opacity:.9}
+
 @media (max-width:420px){
   .row{gap:10px}
   .btn{padding:8px 10px;font-size:14px}
@@ -280,7 +285,11 @@ body.pov-blur > *:not(.modal){
           <div class="muted">Develop your will to value - Seven chapters. Seven days each.</div>
         </div>
       </div>
+      <div class="utilActions">
+         <button class="btn sm" id="povSaveBtn" title="Bookmark this site">Bookmark</button>
+      </div>
     </header>
+
 
     <div class="grid">
       <section class="card">
@@ -384,6 +393,20 @@ body.pov-blur > *:not(.modal){
       <div style="height:12px"></div>
       <div class="muted">Note</div>
       <blockquote id="historyNote" style="margin-top:6px">(no note)</blockquote>
+    </div>
+  </div>
+  
+  <div class="modal" id="povSaveModal">
+    <div class="sheet">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:700">Bookmark this site</div>
+        <button class="btn" id="povSaveClose">✕</button>
+      </div>
+      <div style="height:10px"></div>
+      <div id="povSaveDynamic"></div>
+      <div class="row" style="gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn sm" id="povCopyLink">Copy link</button>
+      </div>
     </div>
   </div>
 
@@ -569,6 +592,7 @@ const eqChart=$('#eqChart');
 
   const histModal=$('#historyModal'), histClose=$('#historyClose');
 const histTitle=$('#historyTitle'), histDate=$('#historyDate'), histEq=$('#historyEq'), histNote=$('#historyNote');
+const povSaveBtn=$('#povSaveBtn'), povSaveModal=$('#povSaveModal'), povSaveClose=$('#povSaveClose'), povCopyLink=$('#povCopyLink'), povSaveDynamic=$('#povSaveDynamic');
 
 
 /* =================== Render =================== */
@@ -884,6 +908,80 @@ resetBtn.onclick=()=>{
   if(!confirm('Delete all progress?')) return;
   localStorage.removeItem(LS_KEY); location.reload();
 };
+
+function povIsApple(){ const ua=navigator.userAgent.toLowerCase(); return /iphone|ipad|ipod/.test(ua); }
+
+function povRenderSaveHelp(){
+  const isApple = povIsApple();
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+  const shortcut = isMac ? '⌘ + D' : 'Ctrl + D';
+  const barToggle = isMac ? '⌘ + Shift + B' : 'Ctrl + Shift + B';
+
+  let html = '';
+  html += `<div class="muted">Desktop</div>`;
+  html += `<div style="margin-top:6px"><span class="povKbd">${shortcut}</span> to bookmark this page.</div>`;
+  html += `<div class="muted" style="margin-top:6px">Or drag the following to your bookmarks bar (<span class="povKbd">${barToggle}</span> if hidden.)</div>`;
+  html += `<div style="height:10px"></div>`;
+  html += `<a id="povDragBookmark" class="pill povDrag" href="${location.href}" draggable="true" aria-label="Drag this to your bookmarks bar"></a>`;
+
+  if(isApple){
+    html += `<div class="muted" style="margin-top:10px">iOS Safari</div>`;
+    html += `<div>Tap <strong>Share</strong> → <strong>Add Bookmark</strong>.</div>`;
+  }else if(isAndroid){
+    html += `<div class="muted" style="margin-top:10px">Android Chrome</div>`;
+    html += `<div>Tap <strong>⋮</strong> → <strong>Bookmark</strong>.</div>`;
+  }
+
+  if('sidebar' in window && window.sidebar && typeof window.sidebar.addPanel === 'function'){
+    html += `<div style="margin-top:10px"><button class="btn sm" id="povFxAdd">Add to Firefox bookmarks</button></div>`;
+  }
+
+  povSaveDynamic.innerHTML = html;
+
+  const drag = document.getElementById('povDragBookmark');
+  if(drag){
+    drag.textContent = document.title;            // bookmark title = page title
+    drag.href = location.href;                    // bookmark URL
+    drag.addEventListener('dragstart', ev=>{
+      try{
+        ev.dataTransfer.setData('text/uri-list', location.href);
+        ev.dataTransfer.setData('text/plain', location.href);
+      }catch(_){}
+    });
+  }
+
+  const fx = document.getElementById('povFxAdd');
+  if(fx){
+    fx.onclick = () => {
+      try{ window.sidebar.addPanel(document.title, location.href, ''); }catch(_){}
+    };
+  }
+}
+
+
+
+
+if(povSaveBtn){
+  povSaveBtn.onclick=()=>{
+    povRenderSaveHelp();
+    povSaveModal.classList.add('open');
+    document.body.classList.add('pov-blur');
+  };
+}
+if(povSaveClose){
+  povSaveClose.onclick=()=>{ povSaveModal.classList.remove('open'); document.body.classList.remove('pov-blur'); };
+}
+if(povCopyLink){
+  povCopyLink.onclick=async ()=>{
+    try{
+      await navigator.clipboard.writeText(location.href);
+      povCopyLink.textContent='Copied';
+      setTimeout(()=>povCopyLink.textContent='Copy link',1200);
+    }catch(_){}
+  };
+}
+
 
 /* =================== Init =================== */
 sizeCanvas();
