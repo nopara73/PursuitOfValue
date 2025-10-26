@@ -30,9 +30,20 @@
     box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35)}
   .list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto}
   .item{display:grid;grid-template-columns:60px 1fr 80px;gap:8px;align-items:center;padding:10px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
-  #map{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-  .node{background:#0b1512;border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center;font-size:12px}
-  .node.lock{opacity:.45;filter:grayscale(.3)}
+    #map{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .povMapNode{display:flex;gap:8px;align-items:center;justify-content:flex-start;background:#0b1512;
+    border:1px solid var(--line);border-radius:12px;padding:10px;cursor:default;text-align:left}
+  .povMapNode:focus{outline:2px solid var(--accent);outline-offset:2px}
+  .povMapNode:hover{border-color:rgba(255,255,255,.18)}
+  .povMapNode.is-current{box-shadow:inset 0 0 0 1px var(--accent)}
+  .povMapNode.is-locked{opacity:.5;filter:grayscale(.2)}
+  .povMapNum{min-width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#0a1411;border:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .povMapMain{flex:1 1 auto;min-width:0}
+  .povMapTitle{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .povMapStatus{font-size:11px;color:var(--muted)}
+  .povMapBar{height:6px;border-radius:999px;background:#0a1411;border:1px solid var(--line);margin-top:6px;overflow:hidden}
+  .povMapFill{height:100%;display:block;background:linear-gradient(160deg,var(--accent),var(--accent2))}
+
   /* modal */
   .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);padding:18px}
   .modal.open{display:grid}
@@ -84,7 +95,8 @@
         </div>
         <div style="height:10px"></div>
         <div class="card" style="padding:10px">
-          <div class="muted">Map</div>
+          <div class="muted" style="margin-bottom:6px">Map</div>
+
           <div id="map"></div>
         </div>
         <div style="height:10px"></div>
@@ -323,6 +335,7 @@ function render(){
   lessonTitle.textContent = `${ch.name} — Day ${day}`;
   chapterTheme.textContent = ch.theme;
   stepPill.textContent = `Day ${day}/7`;
+  stepPill.style.fontWeight = '700';
   chapPill.textContent = `Chapter ${S.chapter+1}/7`;
   const ema = eqEMA();
   eqPill.textContent = `EQ ${ema? ema.toFixed(2):'—'}`;
@@ -334,12 +347,37 @@ function renderMap(){
   map.innerHTML="";
   PROGRAM.forEach((c,i)=>{
     const n=document.createElement('div');
-    n.className='node'+(i>S.chapter?' lock':'');
-    const status = i<S.chapter ? '✓' : (i===S.chapter? `Day ${S.day+1}/7` : 'Locked');
-    n.textContent = `${i+1}. ${c.name} · ${status}`;
+    const isDone=i<S.chapter, isCurrent=i===S.chapter, isLocked=i>S.chapter;
+    const status = isDone ? 'Complete' : (isCurrent? `Day ${S.day+1}/7` : 'Locked');
+    const pct = isDone ? 100 : (isCurrent? Math.round(((S.day+1)/7)*100) : 0);
+
+    n.className = 'povMapNode' + (isCurrent?' is-current':'') + (isLocked?' is-locked':'');
+    n.setAttribute('role','listitem');
+    if(isCurrent){ n.setAttribute('aria-current','step'); }
+    n.setAttribute('aria-label', `${i+1}. ${c.name}. ${status}`);
+
+    n.innerHTML = `
+      <div class="povMapNum">${i+1}</div>
+      <div class="povMapMain">
+        <div class="povMapTitle">${c.name}</div>
+        <div class="povMapStatus">${status}</div>
+        <div class="povMapBar" aria-hidden="true"><span class="povMapFill" style="width:${pct}%"></span></div>
+      </div>
+    `;
     map.appendChild(n);
   });
+
+  // keyboard navigation across nodes
+  Array.from(map.children).forEach(el=> el.tabIndex=0);
+  map.onkeydown = e=>{
+    const items=Array.from(map.children);
+    const idx=items.indexOf(document.activeElement);
+    if(idx===-1) return;
+    if(e.key==='ArrowRight'){ e.preventDefault(); (items[idx+1]||items[0]).focus(); }
+    if(e.key==='ArrowLeft'){ e.preventDefault(); (items[idx-1]||items[items.length-1]).focus(); }
+  };
 }
+
 function renderHistory(){
   const arr=[...S.entries].sort((a,b)=> a.ts<b.ts?1:-1);
   historyEl.innerHTML = arr.map(e=>{
