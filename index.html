@@ -113,6 +113,13 @@ body.pov-blur > *:not(.modal){
 }
 
   .sheet{position:relative;width:min(720px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:20px}
+.povSessionSheet{
+  position:relative;
+  width:min(720px,96vw);
+  max-height:90vh;
+  overflow:auto;
+  box-sizing:border-box;
+}
 
 
   blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:#0a1411;border-radius:8px}
@@ -320,7 +327,7 @@ body.pov-blur > *:not(.modal){
 
   <!-- Modal: session -->
   <div class="modal" id="modal">
-    <section class="card">
+  <section class="card povSessionSheet">
         <div class="row povCardHeader" style="justify-content:space-between">
         <div id="stageTitle" class="povCardTitle">Session</div>
         <button class="btn" id="close">✕</button>
