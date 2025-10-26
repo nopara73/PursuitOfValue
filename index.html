@@ -12,8 +12,9 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;color:var(--ink);
-         .wrap > header{margin-bottom:24px}
     background:radial-gradient(1000px 700px at 80% -10%, #163a2b 0%, #0b1512 40%, #0b1210 70%) , #0b1210}
+.wrap > header{margin-bottom:24px}
+
   .wrap{max-width:980px;margin:0 auto;padding:20px}
   .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--card);
@@ -25,14 +26,35 @@
   .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
   .historyPane{display:flex;flex-direction:column}
   @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  @media (max-width:700px){
+  .wrap{padding:16px}
+  h1{font-size:clamp(18px,5vw,20px)}
+  .pill{font-size:11px;padding:6px 10px}
+  .item{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+  .item .muted{text-align:left !important}
+  .povMapTitle{font-size:13px}
+  .povMapStatus{font-size:11px}
+  .povMapNum{min-width:26px;height:26px}
+  .big{padding:14px}
+  #eqRow span{min-width:auto}
+}
+@media (max-width:420px){
+  .row{gap:10px}
+  .btn{padding:8px 10px;font-size:14px}
+  .pill{font-size:10px}
+}
+
   .pill{background:#0b1512;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px;color:var(--muted)}
   .big{display:grid;place-items:center;padding:18px;border-radius:24px;background:linear-gradient(160deg,#0f1f1a,#0b1512);border:1px solid var(--line)}
-  .cta{width:220px;height:220px;border:none;border-radius:50%;font-weight:800;font-size:18px;letter-spacing:.2px;cursor:pointer;
+  .cta{inline-size:clamp(140px,40vw,220px);aspect-ratio:1/1;border:none;border-radius:50%;font-weight:800;font-size:clamp(16px,2.6vw,18px);letter-spacing:.2px;cursor:pointer;
     background: radial-gradient(85% 85% at 50% 20%, #4affb4, var(--accent) 55%, var(--accent2) 100%);
     box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35)}
+
   .list{display:flex;flex-direction:column;gap:12px;overflow-y:auto;overflow-x:hidden;flex:1 1 auto;min-height:0}
-  .item{display:grid;grid-template-columns:60px 1fr 80px;gap:14px;align-items:center;padding:12px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
-    #map{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+  .item{display:grid;grid-template-columns:minmax(56px,80px) 1fr minmax(68px,84px);gap:14px;align-items:center;padding:12px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
+
+    #map{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+
   .povMapNode{display:flex;gap:8px;align-items:center;justify-content:flex-start;background:#0b1512;
     border:1px solid var(--line);border-radius:12px;padding:12px;cursor:default;text-align:left}
   .povMapNode{cursor:default;user-select:none}
@@ -48,7 +70,8 @@
   /* modal */
   .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);padding:18px}
   .modal.open{display:grid}
-  .sheet{width:min(720px,96vw);background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:20px}
+  .sheet{width:min(720px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:20px}
+
   blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:#0a1411;border-radius:8px}
   textarea{width:100%;background:#0a1411;border:1px solid var(--line);color:var(--ink);padding:12px 14px;border-radius:12px;font-size:15px}
   ul{margin:8px 0 0 18px}
@@ -56,8 +79,12 @@
   .rating{display:flex;gap:8px;align-items:center}
   .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#0a1411;border:1px solid var(--line);cursor:pointer;color:var(--muted);font-size:12px}
   .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
+  .btn,.dot{min-width:44px;min-height:40px}
+  .btn:focus-visible,.dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  
   /* chart */
-  #eqChart{width:100%;height:200px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
+  #eqChart{width:100%;height:auto;background:#0b1512;border:1px solid var(--line);border-radius:12px}
+
   .povBookLink{
   color:var(--accent);
   text-decoration:none;
@@ -105,13 +132,14 @@
         <div class="big" style="margin-top:20px">
           <button class="cta" id="start">Start</button>
         </div>
-        <div style="height:20px"></div>.
+        <div style="height:20px"></div>
+
         <div class="card" style="padding:16px">
           <div class="muted" style="margin-bottom:6px">Map</div>
 
           <div id="map"></div>
         </div>
-        <div style="height:20px"></div>.
+        <div style="height:20px"></div>
         <div class="card" style="padding:16px">
           <div class="muted">Equanimity trend</div>
           <canvas id="eqChart" width="900" height="200" aria-label="Equanimity trend"></canvas>
@@ -452,7 +480,20 @@ function complete(){
 
 document.getElementById('save').onclick = complete;
 
-/* =================== Equanimity metrics & chart =================== */
+/* ========== Responsive canvas sizing ========== */
+function sizeCanvas(){
+  const ratio = window.devicePixelRatio || 1;
+  const cssH = 200;
+  const cssW = eqChart.clientWidth || 900;
+  eqChart.style.height = cssH + 'px';
+  eqChart.width = Math.floor(cssW * ratio);
+  eqChart.height = Math.floor(cssH * ratio);
+  eqChart._ratio = ratio;
+}
+
+window.addEventListener('resize', () => { sizeCanvas(); drawEqChart(); });
+
+  /* =================== Equanimity metrics & chart =================== */
 function eqSeries(limit=90){
   return S.entries.filter(e=>typeof e.eq==='number').slice(-limit);
 }
@@ -463,24 +504,58 @@ function eqEMA(N=30){
   return ema;
 }
 function drawEqChart(){
-  const cvs=eqChart; if(!cvs) return; const ctx=cvs.getContext('2d'); const w=cvs.width, h=cvs.height;
-  ctx.clearRect(0,0,w,h); ctx.fillStyle='#0a1411'; ctx.fillRect(0,0,w,h);
+  const cvs = eqChart; if(!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const ratio = cvs._ratio || window.devicePixelRatio || 1;
+  const cssW = (cvs.width / ratio);
+  const cssH = (cvs.height / ratio);
+
+  // reset and clear in device pixels, then draw in CSS pixels
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+
+  // background
+  ctx.fillStyle = '#0a1411';
+  ctx.fillRect(0,0,cssW,cssH);
+
   // grid
-  ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1; ctx.beginPath();
-  for(let i=1;i<=4;i++){ const y=h - i*(h/5); ctx.moveTo(40,y); ctx.lineTo(w-10,y);} ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='12px ui-sans-serif';
-  for(let i=1;i<=5;i++){ const y=h - i*(h/5); ctx.fillText(String(i), 8, y+4); }
-  const pts=eqSeries(); if(pts.length<2){ ctx.fillText('Log EQ to see trend', w/2-70, h/2); return; }
-  const padL=40, padR=10, padT=10, padB=20; const xmin=0, xmax=pts.length-1;
-  const x=i=> padL + (i-xmin)/(xmax-xmin)*(w-padL-padR);
-  const y=v=> padT + (1-(v-1)/4) * (h-padT-padB);
+  ctx.strokeStyle = 'rgba(255,255,255,.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for(let i=1;i<=4;i++){
+    const y = cssH - i*(cssH/5);
+    ctx.moveTo(40,y); ctx.lineTo(cssW-10,y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.font = '12px ui-sans-serif';
+  for(let i=1;i<=5;i++){
+    const y = cssH - i*(cssH/5);
+    ctx.fillText(String(i), 8, y+4);
+  }
+
+  const pts = eqSeries(); 
+  if(pts.length<2){ ctx.fillText('Log EQ to see trend', cssW/2-70, cssH/2); return; }
+
+  const padL=40, padR=10, padT=10, padB=20; 
+  const xmin=0, xmax=pts.length-1;
+  const x = i => padL + (i-xmin)/(xmax-xmin)*(cssW-padL-padR);
+  const y = v => padT + (1-(v-1)/4) * (cssH-padT-padB);
+
   // line
-  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); ctx.lineWidth=2.2; ctx.beginPath();
-  pts.forEach((e,i)=>{ const X=x(i), Y=y(e.eq); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }); ctx.stroke();
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  pts.forEach((e,i)=>{ const X=x(i), Y=y(e.eq); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+  ctx.stroke();
+
   // markers
-  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   pts.forEach((e,i)=>{ const X=x(i), Y=y(e.eq); ctx.beginPath(); ctx.arc(X,Y,2.5,0,Math.PI*2); ctx.fill(); });
 }
+
 
 /* =================== Export / Import / Reset =================== */
 exportBtn.onclick = ()=>{
@@ -501,7 +576,9 @@ resetBtn.onclick=()=>{
 };
 
 /* =================== Init =================== */
+sizeCanvas();
 render();
+
 
 document.addEventListener('keydown', e=>{
   if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
