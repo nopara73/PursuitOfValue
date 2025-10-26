@@ -97,7 +97,15 @@
   .dot.sel{background:var(--accent); color:#082816; border:none; font-weight:700}
   .btn,.dot{min-width:44px;min-height:40px}
   .btn:focus-visible,.dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  
+    .btn.sm{padding:6px 10px;font-size:12px;border-radius:10px;min-height:34px}
+  .utilActions{display:flex;gap:8px;align-items:center;margin-left:auto}
+  .btn.danger{border-color:rgba(255,105,97,.35);color:#ffb3ae}
+  .btn.danger:hover{background:#1a0f0f}
+  @media (max-width:700px){
+    .utilActions{gap:6px}
+    .btn.sm{padding:6px 8px;font-size:11px}
+  }
+
   /* chart */
   #eqChart{
   width:100%;
@@ -168,13 +176,8 @@
         <div>
           <h1>Pursuit of Value</h1>
           <div class="muted">Develop your will to value - Seven chapters. Seven days each.</div>
-          <div class="povByline">Based on the book <a href="https://www.amazon.com/Pursuit-Value-Philosophy-Loss-Equanimity/dp/1979976015" target="_blank" rel="noopener noreferrer" class="povBookLink"><em>The Pursuit of Value</em> by Derek Mazzone</a></div>
+          <div class="povByline">Based on<a href="https://www.amazon.com/Pursuit-Value-Philosophy-Loss-Equanimity/dp/1979976015" target="_blank" rel="noopener noreferrer" class="povBookLink"><em>The Pursuit of Value</em> by Derek Mazzone</a></div>
         </div>
-      </div>
-      <div class="row">
-        <button class="btn" id="exportBtn">Export</button>
-        <label class="btn" for="importFile">Import<input id="importFile" type="file" accept="application/json" hidden></label>
-        <button class="btn" id="resetBtn">Reset</button>
       </div>
     </header>
 
@@ -210,10 +213,15 @@
         </div>
       </section>
 
-      <aside class="card historyPane">
+            <aside class="card historyPane">
         <div class="row" style="justify-content:space-between">
           <div style="font-weight:700">History</div>
           <div class="muted">Newest first</div>
+          <div class="utilActions">
+            <button class="btn sm" id="exportBtn" title="Download your data">Export</button>
+            <label class="btn sm" for="importFile" title="Load data from a file">Import<input id="importFile" type="file" accept="application/json" hidden></label>
+            <button class="btn sm danger" id="resetBtn" title="Delete all progress">Reset</button>
+          </div>
         </div>
         <div class="list" id="history"></div>
       </aside>
