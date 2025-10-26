@@ -409,6 +409,21 @@ body.pov-blur > *:not(.modal){
       </div>
     </div>
   </div>
+  
+    <div class="modal" id="povLimitModal">
+    <div class="sheet">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:700">One session per day</div>
+        <button class="btn" id="povLimitClose">✕</button>
+      </div>
+      <div style="height:10px"></div>
+      <div class="muted">Only one session per day is allowed. Come back tomorrow!</div>
+      <div class="row" style="gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn sm" id="povLimitClose2">OK</button>
+      </div>
+    </div>
+  </div>
+
 
 <script>
 /* =================== Quotes: 7 per chapter (day-specific) =================== */
@@ -576,6 +591,15 @@ function load(){
 }
 const S = load();
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
+let povSkipOnce = false;
+function povSameDay(a,b){
+  const da=new Date(a), db=new Date(b);
+  return da.getFullYear()===db.getFullYear() && da.getMonth()===db.getMonth() && da.getDate()===db.getDate();
+}
+function povHasEntryToday(){
+  const now = Date.now();
+  return S.entries.some(e => povSameDay(e.ts, now));
+}
 
 /* =================== UI refs =================== */
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
@@ -593,6 +617,7 @@ const eqChart=$('#eqChart');
   const histModal=$('#historyModal'), histClose=$('#historyClose');
 const histTitle=$('#historyTitle'), histDate=$('#historyDate'), histEq=$('#historyEq'), histNote=$('#historyNote');
 const povSaveBtn=$('#povSaveBtn'), povSaveModal=$('#povSaveModal'), povSaveClose=$('#povSaveClose'), povCopyLink=$('#povCopyLink'), povSaveDynamic=$('#povSaveDynamic');
+const povLimitModal=$('#povLimitModal'), povLimitClose=$('#povLimitClose'), povLimitClose2=$('#povLimitClose2');
 
 
 /* =================== Render =================== */
@@ -684,8 +709,17 @@ function drawEqDots(sel=curEq){
 /* =================== Session flow =================== */
 let stage=0; // 0=quote, 1=equanimity, 2=exercise
 
-start.onclick=()=> openSession();
-  
+start.onclick=()=>{
+  if(!povSkipOnce && povHasEntryToday()){
+    povLimitModal.classList.add('open');
+    document.body.classList.add('pov-blur');
+    return;
+  }
+  povSkipOnce=false;
+  openSession();
+};
+
+
 nextBtn.onclick=()=> {
   if(stage===0){
     stage=1;
@@ -909,6 +943,13 @@ resetBtn.onclick=()=>{
   localStorage.removeItem(LS_KEY); location.reload();
 };
 
+document.addEventListener('keydown', e=>{
+  if(e.ctrlKey && e.altKey && e.shiftKey && e.key.toLowerCase()==='k'){
+    povSkipOnce = true;
+  }
+});
+
+
 function povIsApple(){ const ua=navigator.userAgent.toLowerCase(); return /iphone|ipad|ipod/.test(ua); }
 
 function povRenderSaveHelp(){
@@ -972,6 +1013,15 @@ if(povSaveBtn){
 if(povSaveClose){
   povSaveClose.onclick=()=>{ povSaveModal.classList.remove('open'); document.body.classList.remove('pov-blur'); };
 }
+
+if(povLimitClose){
+  povLimitClose.onclick=()=>{ povLimitModal.classList.remove('open'); document.body.classList.remove('pov-blur'); };
+}
+if(povLimitClose2){
+  povLimitClose2.onclick=()=>{ povLimitModal.classList.remove('open'); document.body.classList.remove('pov-blur'); };
+}
+
+
 if(povCopyLink){
   povCopyLink.onclick=async ()=>{
     try{
