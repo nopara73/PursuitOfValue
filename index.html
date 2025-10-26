@@ -72,12 +72,9 @@
   .historyPane > .povHistoryHeader{
   position:sticky;
   top:0;
-  background:var(--card);
   z-index:2;
-  margin:0 -16px 8px;
-  padding:0 16px 8px;
-  border-bottom:1px solid var(--line);
 }
+
 
 
   .histItem {
@@ -170,9 +167,6 @@
   font-style:italic;
 }
 #modal #close {
-  position:absolute;
-  top:16px;
-  right:16px;
   background:rgba(255,255,255,0.05);
   border-radius:50%;
   width:36px;
@@ -184,6 +178,7 @@
   place-items:center;
   padding:0;
 }
+
 #modal #close:hover {
   background:rgba(255,255,255,0.1);
 }
@@ -202,6 +197,24 @@
 @media (max-width:720px){
   .povBuyCard{grid-template-columns:1fr}
   .povBookImg{max-width:240px;justify-self:center}
+}
+
+/* === shared card header style === */
+.povCardHeader{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:-16px -16px 12px;
+  padding:12px 16px 8px;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  border-top-left-radius:var(--r);
+  border-top-right-radius:var(--r);
+}
+.povCardTitle{
+  font-weight:800;
+  font-size:17px;
+  color:var(--ink);
 }
 
 /* === overrides: history header spacing === */
@@ -245,39 +258,38 @@
 
     <div class="grid">
       <section class="card">
-        <div class="row" style="justify-content:space-between">
+        <div class="row povCardHeader">
           <div>
             <div class="muted">Next session</div>
-            <div id="lessonTitle" style="font-weight:700">—</div>
+            <div id="lessonTitle" class="povCardTitle">—</div>
             <div class="muted" id="chapterTheme">—</div>
           </div>
-          <div class="row">
-            <div class="pill" id="stepPill">Day 1/7</div>
-            <div class="pill" id="chapPill">Chapter 1/7</div>
-            <div class="pill" id="eqPill">EQ —</div>
-          </div>
         </div>
+        <div class="row" style="justify-content:flex-end">
+          <div class="pill" id="stepPill">Day 1/7</div>
+          <div class="pill" id="chapPill">Chapter 1/7</div>
+          <div class="pill" id="eqPill">EQ —</div>
+        </div>
+
         <div class="big" id="startWrap" style="margin-top:20px" role="button" tabindex="0" aria-label="Start next session">
           <button class="cta" id="start" aria-describedby="stepPill chapPill">Start</button>
         </div>
         <div style="height:20px"></div>
 
         <div class="card" style="padding:16px">
-          <div class="muted" style="margin-bottom:6px">Your progress</div>
-
+          <div class="povCardHeader"><div class="povCardTitle">Your progress</div></div>
           <div id="map"></div>
         </div>
         <div style="height:20px"></div>
         <div class="card" style="padding:16px">
-          <div style="font-weight:600;font-size:15px;margin-bottom:6px;color:var(--ink)">Equanimity trend</div>
-
+          <div class="povCardHeader"><div class="povCardTitle">Equanimity trend</div></div>
           <canvas id="eqChart" width="900" height="200" aria-label="Equanimity trend"></canvas>
         </div>
       </section>
 
       <aside class="card historyPane">
-        <div class="row povHistoryHeader">
-          <div style="font-weight:700">Entries</div>
+        <div class="row povCardHeader povHistoryHeader">
+          <div class="povCardTitle">Entries</div>
           <div class="muted">Newest first</div>
           <div class="utilActions">
             <button class="btn sm" id="exportBtn" title="Download your data">Export</button>
@@ -292,14 +304,13 @@
 
   <!-- Modal: session -->
   <div class="modal" id="modal">
-    <div class="sheet">
-      <div class="row" style="justify-content:space-between">
-        <div id="stageTitle" style="font-weight:700">Session</div>
+    <section class="card">
+        <div class="row povCardHeader" style="justify-content:space-between">
+        <div id="stageTitle" class="povCardTitle">Session</div>
         <button class="btn" id="close">✕</button>
       </div>
 
       <div id="quoteWrap" style="margin-top:8px">
-        <div class="muted">Quote of the day</div>
         <div id="quoteBox" style="background:#0b1512;border:1px solid var(--accent);border-radius:12px;padding:16px;margin-top:8px">
   <div id="quote" style="font-size:16px;font-weight:600"></div>
 </div>
