@@ -189,6 +189,22 @@
   .povBookImg{max-width:240px;justify-self:center}
 }
 
+/* === overrides: history header spacing === */
+.historyPane > .row{
+  display:grid !important;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  column-gap:16px;
+  padding-bottom:10px;
+}
+.historyPane > .row .muted{justify-self:center}
+.utilActions{margin-left:0 !important; gap:12px}
+.btn.sm{padding:6px 12px; min-height:34px}
+@media (max-width:700px){
+  .historyPane > .row{grid-template-columns:1fr; row-gap:8px;}
+  .historyPane > .row .muted{justify-self:start}
+  .utilActions{justify-self:end}
+}
 
 </style>
 </head>
