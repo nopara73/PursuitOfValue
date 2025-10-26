@@ -531,40 +531,53 @@ function complete(){
   save();
   modal.classList.remove('open');
   render();
+}
 
-// Add hover listener to show tooltip on data points
+// Add hover listener to show tooltip on data points (bind once, not inside complete)
 eqChart.onmousemove = e => {
   const rect = eqChart.getBoundingClientRect();
   const scale = eqChart._ratio || 1;
   const mx = (e.clientX - rect.left) * scale;
   const my = (e.clientY - rect.top) * scale;
   const ctx = eqChart.getContext('2d');
+
   drawEqChart(); // redraw base chart
 
   for(const pt of eqChart._pts || []){
     const dx = pt.x * scale - mx, dy = pt.y * scale - my;
     if(dx*dx + dy*dy < 80){
+      // draw tooltip in device pixels but set transform to match stored coords
       ctx.save();
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
       ctx.fillStyle = 'rgba(0,0,0,0.85)';
       ctx.strokeStyle = 'rgba(255,255,255,0.2)';
       ctx.lineWidth = 1;
-      ctx.font = '12px sans-serif';
+      ctx.font = '12px ui-sans-serif';
       const text = `EQ ${pt.val} — ${pt.date}`;
       const w = ctx.measureText(text).width + 10;
-      ctx.beginPath();
-      ctx.roundRect(pt.x+6, pt.y-26, w, 22, 6);
-      ctx.fill();
-      ctx.stroke();
+      // rounded rect fallback if roundRect is unavailable
+      if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(pt.x+6, pt.y-26, w, 22, 6);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.rect(pt.x+6, pt.y-26, w, 22);
+        ctx.fill();
+        ctx.stroke();
+      }
       ctx.fillStyle = '#eaf7f1';
       ctx.fillText(text, pt.x+11, pt.y-10);
       ctx.restore();
-      break;
+      return;
     }
   }
 };
 
-}
+// Clear tooltip when leaving the canvas
+eqChart.onmouseleave = () => { drawEqChart(); };
+
 
 document.getElementById('save').onclick = complete;
 
