@@ -70,7 +70,8 @@
   /* modal */
   .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);padding:18px}
   .modal.open{display:grid}
-  .sheet{width:min(720px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:20px}
+  .sheet{position:relative;width:min(720px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:20px}
+
 
   blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:#0a1411;border-radius:8px}
   textarea{width:100%;background:#0a1411;border:1px solid var(--line);color:var(--ink);padding:12px 14px;border-radius:12px;font-size:15px}
@@ -106,6 +107,40 @@
 }
 #eqChart:hover {
   box-shadow:0 0 0 2px var(--accent), 0 0 10px rgba(41,214,111,0.25);
+}
+
+  #quoteBox {
+  background:#0b1512;
+  border:1px solid var(--accent);
+  border-radius:12px;
+  padding:16px;
+  margin-top:8px;
+}
+#quote {
+  font-size:16px;
+  font-weight:600;
+  color:var(--ink);
+}
+#quoteSource {
+  font-style:italic;
+}
+#modal #close {
+  position:absolute;
+  top:16px;
+  right:16px;
+  background:rgba(255,255,255,0.05);
+  border-radius:50%;
+  width:36px;
+  height:36px;
+  font-size:16px;
+  font-weight:bold;
+  color:var(--ink);
+  display:grid;
+  place-items:center;
+  padding:0;
+}
+#modal #close:hover {
+  background:rgba(255,255,255,0.1);
 }
 
 </style>
@@ -181,8 +216,12 @@
 
       <div id="quoteWrap" style="margin-top:8px">
         <div class="muted">Quote of the day</div>
-        <blockquote id="quote"></blockquote>
-        <div class="muted" id="quoteSource" style="margin-top:12px;font-size:12px;opacity:.8">
+        <div id="quoteBox" style="background:#0b1512;border:1px solid var(--accent);border-radius:12px;padding:16px;margin-top:8px">
+  <div id="quote" style="font-size:16px;font-weight:600"></div>
+</div>
+
+        <div class="muted" id="quoteSource" style="margin-top:12px;font-size:12px;opacity:.8;font-style:italic">
+
           From <a href="https://www.amazon.com/Pursuit-Value-Philosophy-Loss-Equanimity/dp/1979976015" target="_blank" rel="noopener noreferrer" style="color:var(--accent);font-style:italic;text-decoration:none">The Pursuit of Value</a> by Derek Mazzone
         </div>
       </div>
@@ -204,7 +243,8 @@
       </div>
 
       <div class="row" style="justify-content:flex-end;margin-top:8px">
-        <button class="btn" id="next">Next</button>
+        <button class="btn primary" id="next" style="border-radius:12px;padding:10px 16px;font-weight:600">Next</button>
+
       </div>
     </div>
   </div>
