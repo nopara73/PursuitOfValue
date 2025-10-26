@@ -45,7 +45,17 @@
 }
 
   .pill{background:#0b1512;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px;color:var(--muted)}
-  .big{display:grid;place-items:center;padding:18px;border-radius:24px;background:linear-gradient(160deg,#0f1f1a,#0b1512);border:1px solid var(--line)}
+    .big{display:grid;place-items:center;padding:18px;border-radius:24px;background:linear-gradient(160deg,#0f1f1a,#0b1512);border:1px solid var(--line)}
+  #startWrap{cursor:pointer}
+  #startWrap:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:24px}
+  .cta{color:#082816;text-shadow:0 1px 0 rgba(255,255,255,.15);transition:transform .15s ease, box-shadow .2s ease}
+  .cta:hover{transform:translateY(-1px)}
+  .cta:active{transform:translateY(0)}
+  .cta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  @media (prefers-reduced-motion: reduce){
+    .cta{transition:none}
+  }
+
   .cta{inline-size:clamp(140px,40vw,220px);aspect-ratio:1/1;border:none;border-radius:50%;font-weight:800;font-size:clamp(16px,2.6vw,18px);letter-spacing:.2px;cursor:pointer;
     background: radial-gradient(85% 85% at 50% 20%, #4affb4, var(--accent) 55%, var(--accent2) 100%);
     box-shadow: inset 0 -8px 16px rgba(0,0,0,.18), 0 30px 60px rgba(18,166,90,.35)}
@@ -178,8 +188,8 @@
             <div class="pill" id="eqPill">EQ —</div>
           </div>
         </div>
-        <div class="big" style="margin-top:20px">
-          <button class="cta" id="start">Start</button>
+        <div class="big" id="startWrap" style="margin-top:20px" role="button" tabindex="0" aria-label="Start next session">
+          <button class="cta" id="start" aria-describedby="stepPill chapPill">Start</button>
         </div>
         <div style="height:20px"></div>
 
@@ -420,6 +430,8 @@ function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const lessonTitle=$('#lessonTitle'), chapterTheme=$('#chapterTheme'), stepPill=$('#stepPill'), chapPill=$('#chapPill'), eqPill=$('#eqPill');
 const start=$('#start'), map=$('#map'), historyEl=$('#history');
+const startWrap=$('#startWrap');
+
 const modal=$('#modal'), closeBtn=$('#close'), nextBtn=$('#next');
 const quoteWrap=$('#quoteWrap'), quoteEl=$('#quote');
 const exerciseWrap=$('#exerciseWrap'), exTitle=$('#exerciseTitle'), exBase=$('#exerciseBase'), exOver=$('#overload'), answer=$('#answer');
@@ -492,6 +504,11 @@ function drawEqDots(sel=curEq){
 /* =================== Session flow =================== */
 let stage=0; // 0=quote, 1=exercise
 start.onclick=()=> openSession();
+startWrap.onclick=(e)=>{ if(e.target!==start) start.click(); };
+startWrap.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); start.click(); }
+});
+
 nextBtn.onclick=()=> {
   if(stage===0){
     stage=1;
