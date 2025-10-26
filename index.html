@@ -69,7 +69,17 @@
 
   .list{display:flex;flex-direction:column;gap:12px;overflow-y:auto;overflow-x:hidden;flex:1 1 auto;min-height:0}
   .item{display:grid;grid-template-columns:minmax(56px,80px) 1fr minmax(68px,84px);gap:14px;align-items:center;padding:12px;background:#0b1512;border:1px solid var(--line);border-radius:12px}
-  .historyPane > .row{position:sticky;top:0;background:var(--card);z-index:2;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+  .historyPane > .povHistoryHeader{
+  position:sticky;
+  top:0;
+  background:var(--card);
+  z-index:2;
+  margin:0 -16px 8px;
+  padding:0 16px 8px;
+  border-bottom:1px solid var(--line);
+}
+
+
   .histItem {
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
@@ -195,26 +205,26 @@
 }
 
 /* === overrides: history header spacing === */
-.historyPane > .row {
-  display: flex !important;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding-bottom: 10px;
+.povHistoryHeader{
+  display:flex !important;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
-.historyPane > .row .muted{justify-self:center}
-.utilActions{margin-left:0 !important; gap:12px}
+.povHistoryHeader .muted{justify-self:center}
+.povHistoryHeader .utilActions{margin-left:auto;gap:12px}
+
 .btn.sm{padding:6px 12px; min-height:34px}
 @media (max-width:700px){
-  .historyPane > .row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .povHistoryHeader{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
   }
-  .utilActions {
-    align-self: flex-end;
+  .povHistoryHeader .utilActions{
+    align-self:flex-end;
+    margin-left:0;
   }
 }
 
@@ -265,8 +275,8 @@
         </div>
       </section>
 
-            <aside class="card historyPane">
-        <div class="row" style="justify-content:space-between">
+      <aside class="card historyPane">
+        <div class="row povHistoryHeader">
           <div style="font-weight:700">Entries</div>
           <div class="muted">Newest first</div>
           <div class="utilActions">
